@@ -1,0 +1,40 @@
+<div class="col-12" *ngIf="alertMsg.value">
+    <div
+        class="alert show d-flex justify-content-between"
+        [class.alert-danger]="!alertMsg.msg"
+        [class.alert-success]="alertMsg.msg"
+        role="alert"
+    >
+        <div>
+            <strong>{{ alertMsg.title }}</strong>
+            {{ alertMsg.body }}
+        </div>
+        <button
+            type="button"
+            class="btn-close"
+            (click)="alertMsg.value = false"
+        ></button>
+    </div>
+</div>
+<app-articles-form
+    [article]="article"
+    [data]="data"
+    [mode]="mode"
+    (formOk)="formSubmitted($event)"
+    (onAlert)="onAlert($event)"
+    (toAddModeEvent)="toAddMode()"
+></app-articles-form>
+<app-articles-list
+    [data]="data"
+    [page]="p"
+    [size]="size"
+    [total]="total"
+    (onAlert)="onAlert($event)"
+    (articleEvent)="updateCurrentArticle($event)"
+    (delArticleEvent)="onDelArticle($event)"
+></app-articles-list>
+<pagination-controls
+    (pageChange)="pageLoad($event)"
+    nextLabel="Suivant"
+    previousLabel="Précédent"
+></pagination-controls>
