@@ -71,7 +71,7 @@
                             (change)="check()"
                             [compareWith]="compareCat"
                         >
-                            <option value="">Choisir</option>
+                            <option selected value="">Choisir</option>
                             <option
                                 [ngValue]="c"
                                 *ngFor="let c of data.categories"
@@ -86,9 +86,7 @@
                     <td>
                         <div class="border border-1 rounded">
                             <app-selected-item
-                                *ngFor="
-                                    let f of form.get('fournisseurs')?.value
-                                "
+                                *ngFor="let f of fournisseurs.value"
                                 [data]="f"
                                 (itemDeleted)="onDeleteFournisseur($event)"
                             ></app-selected-item>
@@ -126,6 +124,7 @@
                 /></label>
                 <input
                     class="form-control d-none"
+                    formControlName="photo"
                     type="file"
                     id="photo"
                     accept="image/*"

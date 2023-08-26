@@ -39,8 +39,8 @@ class UpdateArticleRequest extends FormRequest
             'stock'          => 'sometimes|numeric',
             'fournisseurs'   => 'sometimes',
             'fournisseurs.*' => 'sometimes|distinct|numeric|exists:fournisseurs,id',
-            'category'       => 'sometimes|exists:categories,id',
-            'photo'          => 'sometimes|string|max:65535',
+            'category'       => 'required|distinct|numeric|exists:categories,id',
+            'photo'          => 'sometimes|max:65535',
         ];
     }
 
@@ -52,6 +52,7 @@ class UpdateArticleRequest extends FormRequest
             'prix.numeric'            => 'Le prix est invalide',
             'stock.numeric'           => 'Le stock est invalide',
             'category.exists'         => "La catégorie n'existe pas",
+            'category.required'       => "La catégorie est manquante",
             'ref.unique'              => 'La référence appartient à un autre article',
             'fournisseurs.required'   => 'Les fournisseurs sont manquants',
             'fournisseurs.array'      => 'Les fournisseurs sont invalides',

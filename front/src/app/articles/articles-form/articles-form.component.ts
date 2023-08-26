@@ -55,14 +55,20 @@ export class ArticlesShowComponent implements OnChanges {
 
     fournItems!: Fournisseur[];
 
-    selectedFournisseurs: Fournisseur[] = [];
-
     libelleExists = false;
 
     form: FormGroup;
 
     get fournisseurs() {
         return this.form.get('fournisseurs') as FormArray;
+    }
+
+    get libelle() {
+        return this.form.get('libelle') as FormControl;
+    }
+
+    get category() {
+        return this.form.get('category') as FormControl;
     }
 
     addFournisseur(f: Fournisseur) {
@@ -80,8 +86,8 @@ export class ArticlesShowComponent implements OnChanges {
             stock: ['', Validators.required],
             category: ['', Validators.required],
             ref: ['', Validators.required],
-            photo: ['', Validators.required],
-            fournisseurs: [[], []],
+            photo: ['nii', Validators.required],
+            fournisseurs: this.fb.array([]),
         });
     }
 
@@ -102,7 +108,8 @@ export class ArticlesShowComponent implements OnChanges {
         this.submitBtnDisabled = !this.check();
     }
 
-    onSubmit() {
+    onSubmit() {//console.log(this.form.value);return
+
         if (this.mode === mode.add) {
             this.formOk.emit({
                 ...this.form.value,
@@ -118,12 +125,10 @@ export class ArticlesShowComponent implements OnChanges {
         const text = target.value.trim().replace(/\s+/g, ' ').toLowerCase();
 
         if (text) {
-            const selectedFournisseurs = this.form.get('fournisseurs')?.value;
-
             this.fournItems = this.data.fournisseurs.filter(
                 (item: Fournisseur) =>
                     item.nom.startsWith(text) &&
-                    !selectedFournisseurs.some(
+                    !this.fournisseurs.value.some(
                         (e: Fournisseur) => e.id == item.id
                     )
             );
@@ -131,32 +136,25 @@ export class ArticlesShowComponent implements OnChanges {
     }
 
     onAddFournisseur(fourn: Fournisseur, el: HTMLInputElement) {
-        const selectedFournisseurs = this.form.get('fournisseurs')?.value;
-
         this.fournItems = [];
         el.value = '';
 
         if (
-            !selectedFournisseurs?.some(
+            !this.fournisseurs.value.some(
                 (item: Fournisseur) => item.id == fourn.id
             )
         )
-            (this.form.get('fournisseurs') as FormArray)?.push(
-                new FormControl(fourn)
-            );
+            this.fournisseurs.value.push(fourn);
 
         this.check();
     }
 
     onDeleteFournisseur(fourn: Fournisseur) {
-        const selectedFournisseurs = this.form.get('fournisseurs')?.value;
-        (this.form.get('fournisseurs') as FormArray).clear();
+        this.fournisseurs.clear();
 
-        selectedFournisseurs.forEach((f: Fournisseur) => {
+        this.fournisseurs.value.forEach((f: Fournisseur) => {
             if (f.id != fourn.id)
-                (this.form.get('fournisseurs') as FormArray).push(
-                    new FormControl(f)
-                );
+                this.fournisseurs.value.push(new FormControl(f));
         });
 
         this.check();
@@ -175,7 +173,6 @@ export class ArticlesShowComponent implements OnChanges {
                         .replace(/\s+/g, ' ')
                         .toLowerCase()
         );
-        console.log(this.libelleExists);
 
         if (this.libelleExists) return !(this.submitBtnDisabled = true);
 
@@ -199,17 +196,12 @@ export class ArticlesShowComponent implements OnChanges {
                 3
             )}-${cl}`.toUpperCase();
 
-        const libelle = this.form.get('libelle'),
-            category = this.data.categories.find(
-                (item) => item.id == this.form.get('category')?.value
-            )!;
-
         if (this.mode === mode.add) {
             this.form.patchValue({
                 ref: ref(
-                    libelle?.value ?? '',
-                    category?.libelle ?? '',
-                    category?.cl ?? 1
+                    this.libelle.value ?? '',
+                    this.category.value?.libelle ?? '',
+                    this.category.value?.cl ?? 1
                 ),
             });
         } else {
@@ -218,8 +210,8 @@ export class ArticlesShowComponent implements OnChanges {
             if (refElements)
                 this.form.patchValue({
                     ref: ref(
-                        libelle?.value ?? '',
-                        category.libelle ?? '',
+                        this.libelle.value ?? '',
+                        this.category.value?.libelle ?? '',
                         parseInt(refElements[refElements.length - 1])
                     ),
                 });

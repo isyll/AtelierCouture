@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
         return [
             'id'      => $this->id,
             'libelle' => $this->libelle,
-            'cl'      => Category::cl($this->id)
+            'cl'      => count($this->articles)
         ];
     }
 }

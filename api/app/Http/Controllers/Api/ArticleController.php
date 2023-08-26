@@ -35,19 +35,12 @@ class ArticleController extends Controller
     public function create(CreateArticleRequest $request)
     {
         $validated = $request->validated();
-
-        $article              = new Article;
-        $article->libelle     = $validated['libelle'];
-        $article->ref         = $validated['ref'];
-        $article->prix        = $validated['prix'];
-        $article->stock       = $validated['stock'];
-        $article->category_id = $validated['category'];
+        $article = Article::create($validated);
 
         if (isset($validated['photo']))
             $article->photo = $this->handleImage($validated['photo']);
 
         $article->save();
-        $article->fournisseurs()->attach($validated['fournisseurs']);
 
         return ArticleResource::make($article);
     }
@@ -65,9 +58,6 @@ class ArticleController extends Controller
 
         $article->fill($validated);
         $article->save();
-
-        if (isset($validated['fournisseurs']))
-            $article->fournisseurs()->sync($validated['fournisseurs']);
 
         return response()->json(['message' => 'Mise à jour réussie', 'data' => ArticleResource::make($article)]);
     }

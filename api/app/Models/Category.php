@@ -15,12 +15,6 @@ class Category extends Model
         return $this->hasMany(Article::class);
     }
 
-    public static function cl(int $id)
-    {
-        $c = self::find($id);
-        return count($c->articles()->withTrashed()->get()) + 1;
-    }
-
     public function scopeStartsWith($query, $prefix)
     {
         return $query->where('libelle', 'LIKE', $prefix . '%');

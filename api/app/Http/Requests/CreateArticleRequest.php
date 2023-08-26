@@ -29,13 +29,13 @@ class CreateArticleRequest extends FormRequest
                         ->orWhereNotNull('deleted_at');
                 })
             ],
-            'ref'            => 'required',
+            'ref'            => 'required|unique:articles,ref',
             'prix'           => 'required|numeric',
             'stock'          => 'required|numeric',
             'fournisseurs'   => 'required|array|min:1',
             'fournisseurs.*' => 'required|distinct|numeric|exists:fournisseurs,id',
-            'category'       => 'required|exists:categories,id',
-            'photo'          => 'sometimes|string|max:65535',
+            'category'       => 'required|numeric|exists:categories,id',
+            'photo'          => 'sometimes|max:65535',
         ];
     }
 

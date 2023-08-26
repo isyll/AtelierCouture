@@ -12,6 +12,29 @@ class Article extends Model
 
     public $guarded = ['id'];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($item) {
+            if (request()->category)
+                $item->category_id = request()->category;
+        });
+
+        static::created(function ($item) {
+            if (request()->fournisseurs) {
+                $item->fournisseurs()->attach(request()->fournisseurs);
+            }
+        });
+
+        static::updated(function ($item) {
+            if (request()->fournisseurs) {
+
+                $item->fournisseurs()->sync(request()->fournisseurs);
+            }
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('libelle');
+            $table->enum('type', ['vente', 'confection']);
             $table->softDeletes();
             $table->timestamps();
         });

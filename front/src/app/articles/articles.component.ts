@@ -66,11 +66,15 @@ export class ArticlesComponent implements OnInit {
         data: Article | { [key: string]: number | string | Array<number> }
     ) {
         if ('fournisseurs' in data) {
-            let fourn = data.fournisseurs as Array<Fournisseur>;
+            const fourn = data.fournisseurs as Array<Fournisseur>;
 
-            // si je reçois un tableau de fournisseurs je le transforme en tableau d'ids
             if (fourn && fourn.every((f) => 'id' in f))
                 data.fournisseurs = fourn.map((f) => f.id);
+        }
+        if ('category' in data) {
+            const cat = data.category as Categorie;
+
+            if (cat && 'id' in cat) data.category = cat.id!;
         }
 
         if (this.mode === mode.add) {
