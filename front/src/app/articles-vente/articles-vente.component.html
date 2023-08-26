@@ -1,0 +1,16 @@
+<app-form [data]="data" [mode]="mode"></app-form>
+
+<app-list
+    [data]="data"
+    [size]="size"
+    [total]="total"
+    [page]="page"
+    [mode]="mode"
+>
+</app-list>
+
+<pagination-controls
+    (pageChange)="pageLoad($event)"
+    nextLabel="Suivant"
+    previousLabel="Précédent"
+></pagination-controls>

@@ -1,13 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
 
-$primary: #6610f2;
-$light: #f1f3ff;
-
-
+@import "assets/variables";
 @import "../node_modules/bootstrap/scss/bootstrap";
-
-
-
-* {
-    font-size: 102%;
-}
+@import "assets/bootswatch";

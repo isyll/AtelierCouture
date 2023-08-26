@@ -1,0 +1,166 @@
+<form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    enctype="multipart/form-data"
+    class="row"
+>
+    <div class="col-7">
+        <div class="row">
+            <div class="col-6">
+                <label for="libelle" class="form-label">Libellé</label>
+                <input
+                    type="text"
+                    id="libelle"
+                    class="form-control"
+                    formControlName="libelle"
+                    (input)="updateRef()"
+                />
+            </div>
+            <div class="col-6 mb-4">
+                <label for="category" class="form-label">Catégorie</label>
+                <select
+                    *ngIf="data"
+                    id="categorie"
+                    class="form-select"
+                    formControlName="category"
+                    (change)="updateRef()"
+                    [compareWith]="compareCat"
+                >
+                    <option value="" selected>Choisir</option>
+                    <option
+                        *ngFor="let cat of data.categories_vente"
+                        [ngValue]="cat"
+                    >
+                        {{ cat.libelle }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row d-flex">
+            <div class="col-6">
+                <label for="promo" style="user-select: none">Promo</label>
+                <input
+                    id="promo"
+                    type="checkbox"
+                    class="form-check-inline"
+                    (change)="onCheckPromo($event)"
+                />
+            </div>
+            <div class="col-6 d-flex" *ngIf="isPromo">
+                <label for="valeur-promo" class="form-label">Valeur</label>
+                <input
+                    type="number"
+                    id="valeur-promo"
+                    formControlName="promo"
+                    class="form-control"
+                />
+            </div>
+        </div>
+        <div class="my-3 col-12">
+            <div class="d-flex">
+                <h3>Liste des articles de confection</h3>
+                <button
+                    type="button"
+                    class="btn btn-link text-danger fs-4"
+                    (click)="addArtConf()"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                </button>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Libellé</th>
+                        <th scope="col">Quantité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let artConf of confection.value">
+                        <td>
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ artConf.libelle }}"
+                            />
+                        </td>
+                        <td>
+                            <input
+                                type="number"
+                                class="form-control"
+                                value="{{ artConf.quantite }}"
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-5 d-flex flex-column justify-content-between">
+        <div class="d-flex align-items-center flex-column">
+            <label
+                for="photo"
+                class="form-label text-center"
+                style="font-size: 150%; cursor: pointer"
+                >{{ form.get("photo")?.value ? "" : "Choisir une photo" }}
+                <img
+                    *ngIf="form.get('photo')?.value"
+                    width="150px"
+                    height="150px"
+                    [src]="form.get('photo')?.value"
+            /></label>
+            <input
+                class="form-control d-none"
+                type="file"
+                id="photo"
+                accept="image/*"
+                (change)="onPhotoPicked($event)"
+            />
+        </div>
+        <input
+            type="text"
+            name="ref"
+            class="text-center form-control"
+            formControlName="ref"
+            readonly
+        />
+    </div>
+    <div class="col-12 my-3 row">
+        <div class="form-group col-3">
+            <label for="cout_fabrication"> Coût de fabrication </label>
+            <input
+                type="number"
+                id="cout_fabrication"
+                formControlName="cout_fabrication"
+                class="form-control"
+                readonly
+            />
+        </div>
+        <div class="form-group col-3">
+            <label for="marge"> Marge </label>
+            <input
+                type="number"
+                id="marge"
+                formControlName="marge"
+                class="form-control"
+                (input)="calculateTotalPrice()"
+            />
+        </div>
+        <div class="col-12"></div>
+        <div class="form-group col-3">
+            <label for="prix_vente"> Prix de vente </label>
+            <input
+                type="number"
+                id="prix_vente"
+                class="form-control"
+                value="{{ totalPrice }}"
+                readonly
+            />
+        </div>
+    </div>
+    <div class="col-12 d-flex justify-content-between p-3">
+        <div></div>
+        <button type="submit" class="btn btn-primary text-white">
+            Envoyer
+        </button>
+    </div>
+</form>

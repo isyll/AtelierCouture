@@ -8,12 +8,12 @@ import { Subscriber } from 'rxjs';
 })
 export class ArticlesService extends AbstractService<Article> {
     url() {
-        return 'articles';
+        return this.base + 'articles';
     }
 
     all(page: number, limit: number) {
         return this.http.get<ArticleAll>(
-            `${this.base}${this.url()}/all?page=${page}&size=${limit}`
+            `${this.url()}/all?page=${page}&size=${limit}`
         );
     }
 }

@@ -1,0 +1,35 @@
+
+<div class="col-12 my-3 row">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Libellé</th>
+                <th scope="col">Quantité stock</th>
+                <th scope="col">Articles confection</th>
+            </tr>
+        </thead>
+        <tbody *ngIf="data">
+            <tr
+                *ngFor="let artVente of data.articles_vente.data
+                | paginate
+                    : {
+                        itemsPerPage: size,
+                        currentPage: page,
+                        totalItems: total,
+                    }"
+            >
+                <td>
+                    {{ artVente.libelle }}
+                </td>
+                <td>
+                    {{ artVente.stock }}
+                </td>
+                <td>
+                    <span *ngFor="let conf of artVente.confection"
+                        >{{ conf.libelle }} - {{ conf.quantite }}</span
+                    >
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

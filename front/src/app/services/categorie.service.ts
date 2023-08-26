@@ -8,6 +8,6 @@ import { AbstractService } from './abstract.service';
 })
 export class CategorieService extends AbstractService<Categorie> {
     url() {
-        return 'categories';
+        return this.base + 'categories';
     }
 }

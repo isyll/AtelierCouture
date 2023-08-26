@@ -1,6 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ArticlesService } from '../services/articles.service';
-import { Response } from '../shared/interfaces/Response';
 import { Article } from '../shared/interfaces/Article';
 import { mode } from '../shared/enums/mode';
 import { Categorie } from '../shared/interfaces/Categorie';

@@ -10,6 +10,8 @@ export interface Article {
     stock: number;
     fournisseurs: Fournisseur[];
     category: Categorie;
+    confection?: Array<Article>;
+    quantite?: number
 }
 
 export interface ArticleAll {

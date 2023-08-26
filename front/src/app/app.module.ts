@@ -14,6 +14,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SuggestionsComponent } from './articles/articles-form/suggestions/suggestions.component';
 import { SelectedItemComponent } from './articles/articles-form/selected-item/selected-item.component';
 import { ArticleItemComponent } from './articles/articles-list/article-item/article-item.component';
+import { ArticlesVenteComponent } from './articles-vente/articles-vente.component';
+import { FormComponent } from './articles-vente/form/form.component';
+import { ListComponent } from './articles-vente/list/list.component';
 
 @NgModule({
     declarations: [
@@ -25,6 +28,9 @@ import { ArticleItemComponent } from './articles/articles-list/article-item/arti
         SuggestionsComponent,
         SelectedItemComponent,
         ArticleItemComponent,
+        ArticlesVenteComponent,
+        FormComponent,
+        ListComponent,
     ],
     imports: [
         BrowserModule,

@@ -16,36 +16,26 @@ export abstract class AbstractService<T> {
 
     constructor(protected http: HttpClient) {}
 
-    paginate(
-        page: number,
-        size: number
-    ): Observable<PaginationResponse<T>> {
+    paginate(page: number, size: number): Observable<PaginationResponse<T>> {
         return this.http.get<PaginationResponse<T>>(
-            this.base + this.url() + '?page=' + page + '&size=' + size
+            this.url() + '?page=' + page + '&size=' + size
         );
     }
 
     delete(id: number): Observable<DataResponse<T>> {
-        return this.http.delete<DataResponse<T>>(
-            this.base + this.url() + '/' + id
-        );
+        return this.http.delete<DataResponse<T>>(this.url() + '/' + id);
     }
 
     search(value: string): Observable<T> {
-        return this.http.get<T>(
-            this.base + this.url() + '/search?value=' + value
-        );
+        return this.http.get<T>(this.url() + '/search?value=' + value);
     }
 
     create(data: T): Observable<DataResponse<T>> {
-        return this.http.post<DataResponse<T>>(this.base + this.url(), data);
+        return this.http.post<DataResponse<T>>(this.url(), data);
     }
 
     update(id: number, data: T): Observable<DataResponse<T>> {
-        return this.http.put<DataResponse<T>>(
-            this.base + this.url() + '/' + id,
-            data
-        );
+        return this.http.put<DataResponse<T>>(this.url() + '/' + id, data);
     }
 
     private handleError(error: HttpErrorResponse) {
