@@ -35,6 +35,16 @@ class Article extends Model
         });
     }
 
+    public function confection()
+    {
+        return $this->belongsToMany(
+            Article::class,
+            'vente_confection',
+            'article_vente_id',
+            'article_confection_id',
+        );
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');

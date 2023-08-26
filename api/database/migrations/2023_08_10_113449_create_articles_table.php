@@ -24,6 +24,9 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->float('promo')->nullable();
+            $table->float('cout_fabrication')->nullable();
+            $table->float('marge')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

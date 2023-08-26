@@ -79,4 +79,14 @@ class CategoryController extends Controller
 
         return ['data' => null, 'success' => true];
     }
+
+    public function filter(Request $request)
+    {
+        if (in_array($type = $request->input('type'), ['vente', 'confection'])) {
+            $categories = Category::where('type', $type)->get();
+            return CategoryResource::collection($categories);
+        }
+
+        return ['data' => null];
+    }
 }

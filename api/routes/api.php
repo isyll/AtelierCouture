@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\ArticleVenteController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FournisseurController;
 use Illuminate\Http\Request;
@@ -29,8 +30,8 @@ Route::prefix('/categories')
         Route::put('/{category}', 'update');
         Route::delete('/{category}', 'delete');
         Route::get('/search', 'search');
+        Route::get('/filter', 'filter');
         Route::get('/{category}', 'show')->whereNumber('category');
-        Route::get('/suggest/{str}', 'suggest');
     });
 
 Route::prefix('/fournisseurs')
@@ -47,8 +48,15 @@ Route::prefix('/articles')
     ->group(function () {
         Route::get('/', 'paginate');
         Route::get('/all', 'index');
+        Route::get('/filter', 'filter');
         Route::get('/{article}', 'show');
         Route::post('/', 'create');
         Route::delete('/{article}', 'delete');
         Route::put('/{article}', 'update');
+
+        Route::prefix('vente')
+            ->controller(ArticleVenteController::class)
+            ->group(function () {
+                Route::post('/', 'create');
+            });
     });

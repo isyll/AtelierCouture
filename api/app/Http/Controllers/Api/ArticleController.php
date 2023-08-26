@@ -35,7 +35,7 @@ class ArticleController extends Controller
     public function create(CreateArticleRequest $request)
     {
         $validated = $request->validated();
-        $article = Article::create($validated);
+        $article   = Article::create($validated);
 
         if (isset($validated['photo']))
             $article->photo = $this->handleImage($validated['photo']);
@@ -60,5 +60,15 @@ class ArticleController extends Controller
         $article->save();
 
         return response()->json(['message' => 'Mise à jour réussie', 'data' => ArticleResource::make($article)]);
+    }
+
+    public function filter(Request $request)
+    {
+        if (in_array($type = $request->input('type'), ['vente', 'confection'])) {
+            $articles = Article::where('type', $type)->get();
+            return ArticleResource::collection($articles);
+        }
+
+        return ['data' => null];
     }
 }

@@ -18,7 +18,8 @@ class CategoryResource extends JsonResource
         return [
             'id'      => $this->id,
             'libelle' => $this->libelle,
-            'cl'      => count($this->articles)
+            'cl'      => count($this->articles),
+            'type'    => $this->type
         ];
     }
 }

@@ -19,6 +19,10 @@ class ArticleResource extends JsonResource
             'ref'          => $this->ref,
             'prix'         => $this->prix,
             'stock'        => $this->stock,
+            'type'         => $this->type,
+            'confection'   => $this->whenLoaded('confection', function () {
+                return static::collection($this->confection);
+            }),
             'fournisseurs' => FournisseurResource::collection($this->fournisseurs),
             'category'     => CategoryResource::make($this->category),
             'photo'        => $this->photo

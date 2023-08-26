@@ -17,27 +17,30 @@ class ArticleSeeder extends Seeder
     public function run(): void
     {
         $fournisseurs = Fournisseur::all();
-        $categories   = Category::all()->toArray();
 
-        for ($i = 0; $i < 5; $i++) {
-            $article = Article::create([
-                'libelle'     => $libelle = fake()->word() . fake()->word(),
-                'type'        => fake()->randomElement(['confection', 'vente']),
-                'prix'        => fake()->randomFloat(
+        for ($i = 0; $i < 15; $i++) {
+            $data = [
+                'libelle' => $libelle = fake()->word() . fake()->word(),
+                'type'    => $type = ['confection', 'vente'][rand(0, 1)],
+                'prix'    => fake()->randomFloat(
                     1,
                     max: 10_000
                 ),
-                'stock'       => fake()->randomFloat(
+                'stock'   => fake()->randomFloat(
                     1,
                     max: 100
                 ),
-                'category_id' => ($categorie = fake()->randomElement($categories))['id'],
-                'ref'         => "REF-" . substr($libelle, 0, 3) .
-                '-' . substr('', 0, 3) .
-                substr($categorie['libelle'], 0, 3)
-            ]);
+            ];
 
-            // $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
+            $categories = Category::where('type', $type)->get();
+
+            $data['category_id'] = ($categorie = fake()->randomElement($categories))['id'];
+            $data['ref']         = strtoupper("REF-" . substr($libelle, 0, 3) .
+                '-' . substr('', 0, 3) . substr($categorie->libelle, 0, 3) . '-' . count($categorie->articles) + 1);
+
+            $article = Article::create($data);
+
+            $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
         }
     }
 }
