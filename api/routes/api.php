@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ArticleConfectionController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\ArticleVenteController;
 use App\Http\Controllers\Api\CategoryController;
@@ -43,20 +44,25 @@ Route::prefix('/fournisseurs')
         Route::get('/{fournisseur}', 'show');
     });
 
-Route::prefix('/articles')
-    ->controller(ArticleController::class)
-    ->group(function () {
-        Route::get('/', 'paginate');
-        Route::get('/all', 'index');
-        Route::get('/filter', 'filter');
-        Route::get('/{article}', 'show');
-        Route::post('/', 'create');
-        Route::delete('/{article}', 'delete');
-        Route::put('/{article}', 'update');
+Route::prefix('/articles')->controller(ArticleController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::prefix('/confection')
+        ->controller(ArticleConfectionController::class)
+        ->group(function () {
+            Route::get('/', 'paginate');
+            Route::get('/all', 'index');
+            Route::get('/filter', 'filter');
+            Route::get('/{article}', 'show')->whereNumber('article');
+            Route::post('/', 'create');
+            Route::delete('/{article}', 'delete');
+            Route::put('/{article}', 'update');
+        });
 
-        Route::prefix('vente')
-            ->controller(ArticleVenteController::class)
-            ->group(function () {
-                Route::post('/', 'create');
-            });
-    });
+    Route::prefix('/vente')
+        ->controller(ArticleVenteController::class)
+        ->group(function () {
+            Route::get('/', 'paginate');
+            Route::get('/all', 'index');
+            Route::post('/', 'create');
+        });
+});

@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Http\Resources\CategoryResource;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Fournisseur;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ArticleSeeder extends Seeder
@@ -18,29 +16,41 @@ class ArticleSeeder extends Seeder
     {
         $fournisseurs = Fournisseur::all();
 
-        for ($i = 0; $i < 15; $i++) {
-            $data = [
-                'libelle' => $libelle = fake()->word() . fake()->word(),
-                'type'    => $type = ['confection', 'vente'][rand(0, 1)],
-                'prix'    => fake()->randomFloat(
-                    1,
-                    max: 10_000
-                ),
-                'stock'   => fake()->randomFloat(
-                    1,
-                    max: 100
-                ),
-            ];
+        $articles = [
+            'vente'      => ['kaftan', 'pagne', 'grand boubou', 'costume', 'pantalon'],
+            'confection' => ['doublure', 'ruban', 'dentelles', 'fil', 'bouton', 'tissu']
+        ];
 
-            $categories = Category::where('type', $type)->get();
+        foreach ($articles as $key => $value) {
+            foreach ($value as $art) {
+                $data = [
+                    'type'    => $key,
+                    'libelle' => $art,
+                    'stock'   => fake()->randomFloat(
+                        1,
+                        max: 100
+                    ),
+                ];
 
-            $data['category_id'] = ($categorie = fake()->randomElement($categories))['id'];
-            $data['ref']         = strtoupper("REF-" . substr($libelle, 0, 3) .
-                '-' . substr('', 0, 3) . substr($categorie->libelle, 0, 3) . '-' . count($categorie->articles) + 1);
+                if ($key === 'confection')
+                    $data['prix'] = fake()->randomFloat(
+                        1,
+                        max: 10_000
+                    );
 
-            $article = Article::create($data);
+                $categories = Category::where('type', $key)->get();
 
-            $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
+                $data['category_id'] = ($categorie = fake()->randomElement($categories))['id'];
+
+                $ref         = strtoupper("REF-" . substr($art, 0, 3) .
+                    '-' . substr('', 0, 3) . substr($categorie->libelle, 0, 3) . '-' . count($categorie->articles) + 1);
+                $data['ref'] = $ref;
+
+                $article = Article::create($data);
+
+                if ($key === 'confection')
+                    $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
+            }
         }
     }
 }

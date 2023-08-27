@@ -1,0 +1,36 @@
+
+    libelleExists = false;
+
+    checkLibelleExists(event: Event) {
+        const target = event.target as HTMLInputElement;
+        const value = target.value.trim().replace(/\s+/g, ' ').toLowerCase();
+
+        let exists = this.data.articles_confection.some(
+            (art) => art.libelle == value
+        );
+
+        if (exists) {
+            console.log(exists);
+            return (this.libelleExists = true);
+        }
+
+        exists = this.data.articles_vente.data.some(
+            (art) => art.libelle == value
+        );
+
+        console.log(exists);
+
+        return (this.libelleExists = exists);
+    }
+
+
+    setInterval(() => {
+        for (const controlName in this.form.controls) {
+            if (this.form.controls.hasOwnProperty(controlName)) {
+                const control = this.form.get(controlName);
+                if (control?.invalid) {
+                    console.log(`Le champ ${controlName} est invalide.`);
+                }
+            }
+        }
+    }, 2500);

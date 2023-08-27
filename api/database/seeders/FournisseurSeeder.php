@@ -13,7 +13,7 @@ class FournisseurSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $fournisseur      = new Fournisseur;
             $fournisseur->nom = fake()->word() . fake()->word();
             $fournisseur->save();

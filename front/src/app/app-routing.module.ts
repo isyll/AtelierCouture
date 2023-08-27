@@ -15,7 +15,7 @@ const routes: Routes = [
         component: CategorieListComponent,
     },
     {
-        path: 'articles',
+        path: 'articles-confection',
         component: ArticlesComponent,
     },
     {

@@ -84,25 +84,16 @@
                 <tr class="position-relative">
                     <td><label for="fournisseurs">Fournisseur</label></td>
                     <td>
-                        <div class="border border-1 rounded">
-                            <app-selected-item
-                                *ngFor="let f of fournisseurs.value"
-                                [data]="f"
-                                (itemDeleted)="onDeleteFournisseur($event)"
-                            ></app-selected-item>
-                            <input
-                                style="border: none"
-                                type="text"
-                                name="fournisseurs"
-                                class="form-control shadow-none p-0"
-                                (input)="onFournisseurInput($event)"
-                                #fournInput
-                            />
-                        </div>
+                        <app-selected-item
+                            *ngFor="let f of fournisseurs.value"
+                            [data]="f"
+                            (itemDeleted)="onDeleteFournisseur($event)"
+                        ></app-selected-item>
                         <app-suggestions
-                            *ngIf="fournItems"
                             [items]="fournItems"
-                            (itemClicked)="onAddFournisseur($event, fournInput)"
+                            [print]="printSuggestion"
+                            (itemClicked)="onAddFournisseur($event)"
+                            (onInput)="onFournisseurInput($event)"
                         ></app-suggestions>
                     </td>
                 </tr>

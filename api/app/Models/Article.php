@@ -25,11 +25,13 @@ class Article extends Model
             if (request()->fournisseurs) {
                 $item->fournisseurs()->attach(request()->fournisseurs);
             }
+            if (request()->confection) {
+                $item->confection()->attach(request()->confection);
+            }
         });
 
         static::updated(function ($item) {
             if (request()->fournisseurs) {
-
                 $item->fournisseurs()->sync(request()->fournisseurs);
             }
         });
@@ -42,7 +44,7 @@ class Article extends Model
             'vente_confection',
             'article_vente_id',
             'article_confection_id',
-        );
+        )->withPivot(['quantite']);
     }
 
     public function category()

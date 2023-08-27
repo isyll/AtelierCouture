@@ -1,5 +1,5 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ArticlesService } from '../services/articles.service';
+import { ArticlesConfectionService } from '../services/articles-confection.service';
 import { Article } from '../shared/interfaces/Article';
 import { mode } from '../shared/enums/mode';
 import { Categorie } from '../shared/interfaces/Categorie';
@@ -29,7 +29,7 @@ export class ArticlesComponent implements OnInit {
         msg: true,
     };
 
-    constructor(private service: ArticlesService) {}
+    constructor(private service: ArticlesConfectionService) {}
 
     ngOnInit(): void {
         this.service.all(this.p, this.size).subscribe((response) => {

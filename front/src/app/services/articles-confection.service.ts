@@ -6,9 +6,9 @@ import { Subscriber } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
-export class ArticlesService extends AbstractService<Article> {
+export class ArticlesConfectionService extends AbstractService<Article> {
     url() {
-        return this.base + 'articles';
+        return this.base + 'articles/confection';
     }
 
     all(page: number, limit: number) {

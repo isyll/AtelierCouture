@@ -36,6 +36,7 @@ class CreateArticleRequest extends FormRequest
             'fournisseurs.*' => 'required|distinct|numeric|exists:fournisseurs,id',
             'category'       => 'required|numeric|exists:categories,id',
             'photo'          => 'sometimes|max:65535',
+            'type'           => 'required'
         ];
     }
 
@@ -56,5 +57,10 @@ class CreateArticleRequest extends FormRequest
             'fournisseurs.*.exists'   => 'Des fournisseurs sont inexistants',
             'photo.max'               => 'La photo est trop grande'
         ];
+    }
+
+    public function prepareForValidation()
+    {
+        return $this->merge(['type' => 'confection']);
     }
 }

@@ -38,7 +38,7 @@ class ArticleCollection extends ResourceCollection
         ];
 
         if ($this->all) {
-            $data['categories']   = CategoryResource::collection(Category::all());
+            $data['categories']   = CategoryResource::collection(Category::where('type', 'confection')->get());
             $data['fournisseurs'] = FournisseurResource::collection(Fournisseur::all());
         }
 

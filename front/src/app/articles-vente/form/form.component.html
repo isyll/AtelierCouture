@@ -15,8 +15,9 @@
                     formControlName="libelle"
                     (input)="updateRef()"
                 />
+                <div></div>
             </div>
-            <div class="col-6 mb-4">
+            <div class="col-6">
                 <label for="category" class="form-label">Catégorie</label>
                 <select
                     *ngIf="data"
@@ -36,7 +37,24 @@
                 </select>
             </div>
         </div>
-        <div class="row d-flex">
+        <div class="row">
+            <div class="col-4">
+                <label for="stock" class="form-label">Stock</label>
+                <input
+                    id="stock"
+                    type="number"
+                    class="form-control"
+                    formControlName="stock"
+                    [ngClass]="{ 'is-invalid': form.get('stock')?.errors }"
+                />
+                <validation-error-msg
+                    [condition]="form.get('stock')?.hasError('min')"
+                >
+                    Le stock ne doit pas être inférieur à 0.
+                </validation-error-msg>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-6">
                 <label for="promo" style="user-select: none">Promo</label>
                 <input
@@ -46,14 +64,26 @@
                     (change)="onCheckPromo($event)"
                 />
             </div>
-            <div class="col-6 d-flex" *ngIf="isPromo">
-                <label for="valeur-promo" class="form-label">Valeur</label>
-                <input
-                    type="number"
-                    id="valeur-promo"
-                    formControlName="promo"
-                    class="form-control"
-                />
+            <div class="col-6" *ngIf="isPromo">
+                <div class="d-flex">
+                    <label for="valeur-promo" class="form-label">Valeur</label>
+                    <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        id="valeur-promo"
+                        formControlName="promo"
+                        class="form-control"
+                        (input)="calculateTotal()"
+                        [ngClass]="{ 'is-invalid': promo.errors }"
+                    />
+                </div>
+                <validation-error-msg [condition]="promo.hasError('max')">
+                    La promotion ne doit pas être supérieur à 100.
+                </validation-error-msg>
+                <validation-error-msg [condition]="promo.hasError('min')">
+                    La promotion ne doit pas être inférieure à 0.
+                </validation-error-msg>
             </div>
         </div>
         <div class="my-3 col-12">
@@ -62,7 +92,7 @@
                 <button
                     type="button"
                     class="btn btn-link text-danger fs-4"
-                    (click)="addArtConf()"
+                    (click)="addConfection()"
                 >
                     <i class="bi bi-plus-circle"></i>
                 </button>
@@ -74,20 +104,30 @@
                         <th scope="col">Quantité</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr *ngFor="let artConf of confection.value">
+                <tbody formArrayName="confection">
+                    <tr
+                        *ngFor="
+                            let artConf of confection.controls;
+                            let i = index
+                        "
+                        [formGroupName]="i"
+                    >
                         <td>
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ artConf.libelle }}"
-                            />
+                            <input type="hidden" formControlName="idConf" />
+                            <app-suggestions
+                                [items]="artConfSuggestions[i]"
+                                [print]="printSuggestion"
+                                (itemClicked)="onArtConfSelect($event, i)"
+                                (onInput)="onArtConfInput($event, i)"
+                                (itemClicked)="calculateTotal()"
+                            ></app-suggestions>
                         </td>
                         <td>
                             <input
                                 type="number"
                                 class="form-control"
-                                value="{{ artConf.quantite }}"
+                                formControlName="quantite"
+                                (input)="calculateTotal()"
                             />
                         </td>
                     </tr>
@@ -119,9 +159,8 @@
         <input
             type="text"
             name="ref"
-            class="text-center form-control"
+            class="text-center form-control disabled"
             formControlName="ref"
-            readonly
         />
     </div>
     <div class="col-12 my-3 row">
@@ -142,8 +181,15 @@
                 id="marge"
                 formControlName="marge"
                 class="form-control"
-                (input)="calculateTotalPrice()"
+                (input)="calculateTotal()"
+                [ngClass]="{ 'is-invalid': marge.errors }"
             />
+            <validation-error-msg [condition]="marge.hasError('maxPct')">
+                La marge maximale est de 30% du coût de fabrication
+            </validation-error-msg>
+            <validation-error-msg [condition]="marge.hasError('min')">
+                La marge doit être supérieure à 0
+            </validation-error-msg>
         </div>
         <div class="col-12"></div>
         <div class="form-group col-3">
@@ -152,14 +198,18 @@
                 type="number"
                 id="prix_vente"
                 class="form-control"
-                value="{{ totalPrice }}"
+                formControlName="total"
                 readonly
             />
         </div>
     </div>
     <div class="col-12 d-flex justify-content-between p-3">
         <div></div>
-        <button type="submit" class="btn btn-primary text-white">
+        <button
+            type="submit"
+            class="btn btn-primary text-white"
+            [disabled]="form.invalid"
+        >
             Envoyer
         </button>
     </div>

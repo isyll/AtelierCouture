@@ -75,8 +75,12 @@ export class ArticlesShowComponent implements OnChanges {
         this.fournisseurs.push(this.fb.control(f));
     }
 
-    compareCat = (cat: Categorie, cat2: Categorie): boolean =>
-        cat && cat2 ? cat.id == cat2.id : cat == cat2;
+    compareCat = (cat1: Categorie, cat2: Categorie): boolean => {
+        if (cat1 && cat2) return cat1.id == cat2.id;
+        return false;
+    };
+
+    printSuggestion = (f: Fournisseur) => f.nom;
 
     constructor(private photoService: PhotoService, private fb: FormBuilder) {
         this.form = this.fb.group({
@@ -108,7 +112,8 @@ export class ArticlesShowComponent implements OnChanges {
         this.submitBtnDisabled = !this.check();
     }
 
-    onSubmit() {//console.log(this.form.value);return
+    onSubmit() {
+        //console.log(this.form.value);return
 
         if (this.mode === mode.add) {
             this.formOk.emit({
@@ -120,10 +125,7 @@ export class ArticlesShowComponent implements OnChanges {
         } else this.formOk.emit(this.form.value);
     }
 
-    onFournisseurInput(event: Event) {
-        const target = event.target as HTMLInputElement;
-        const text = target.value.trim().replace(/\s+/g, ' ').toLowerCase();
-
+    onFournisseurInput(text: string) {
         if (text) {
             this.fournItems = this.data.fournisseurs.filter(
                 (item: Fournisseur) =>
@@ -135,9 +137,8 @@ export class ArticlesShowComponent implements OnChanges {
         } else this.fournItems = [];
     }
 
-    onAddFournisseur(fourn: Fournisseur, el: HTMLInputElement) {
+    onAddFournisseur(fourn: Fournisseur) {
         this.fournItems = [];
-        el.value = '';
 
         if (
             !this.fournisseurs.value.some(

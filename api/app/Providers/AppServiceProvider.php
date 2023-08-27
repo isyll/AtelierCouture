@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,19 +22,29 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Validator::extend('base64_image_size', function ($attribute, $value, $parameters, $validator) {
+        Validator::extend('confection_validation', function ($attribute, $value, $parameters, $validator) {
+            foreach ($value as $id => $data) {
+                if ($article = Article::find($id)) {
+                    if ($article->type != 'confection') return false;
+                } else return false;
 
-            // Decode the image
-            $decodedImage = base64_decode($value);
+                if (
+                    !array_key_exists('quantite', $data)
+                    || !is_numeric($data['quantite'])
+                )
+                    return false;
+            }
 
-            if (!$decodedImage) return false;
+            return true;
+        });
 
-            // Get image size in kilobytes
-            $imageSize = strlen($decodedImage) / 1024;
+        Validator::extend('category_validation', function ($attribute, $value, $parameters, $validator) {
+            foreach ($parameters as $type) {
+                if (Category::find($value)->type != $type)
+                    return false;
+            }
 
-            // Check if image is below max size
-            return $imageSize <= $parameters[0];
-
+            return true;
         });
     }
 }

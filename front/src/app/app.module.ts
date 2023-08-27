@@ -11,12 +11,13 @@ import { ArticlesComponent } from './articles/articles.component';
 import { ArticlesListComponent } from './articles/articles-list/articles-list.component';
 import { ArticlesShowComponent } from './articles/articles-form/articles-form.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { SuggestionsComponent } from './articles/articles-form/suggestions/suggestions.component';
+import { SuggestionsComponent } from './suggestions/suggestions.component';
 import { SelectedItemComponent } from './articles/articles-form/selected-item/selected-item.component';
 import { ArticleItemComponent } from './articles/articles-list/article-item/article-item.component';
 import { ArticlesVenteComponent } from './articles-vente/articles-vente.component';
 import { FormComponent } from './articles-vente/form/form.component';
 import { ListComponent } from './articles-vente/list/list.component';
+import { ValidationErrorMsgComponent } from './validation-error-msg/validation-error-msg.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +32,7 @@ import { ListComponent } from './articles-vente/list/list.component';
         ArticlesVenteComponent,
         FormComponent,
         ListComponent,
+        ValidationErrorMsgComponent,
     ],
     imports: [
         BrowserModule,

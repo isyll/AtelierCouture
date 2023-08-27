@@ -17,16 +17,16 @@ return new class extends Migration {
             $table->string('ref')->unique();
             $table->string('libelle')->unique();
             $table->enum('type', ['confection', 'vente']);
-            $table->float('prix');
-            $table->float('stock');
+            $table->double('prix', unsigned: true)->nullable();
+            $table->double('stock', unsigned: true);
             $table->longText('photo')->nullable();
             $table->foreignIdFor(Category::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->float('promo')->nullable();
-            $table->float('cout_fabrication')->nullable();
-            $table->float('marge')->nullable();
+            $table->double('cout_fabrication', unsigned: true)->nullable();
+            $table->double('marge', unsigned: true)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

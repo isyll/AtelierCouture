@@ -1,4 +1,27 @@
-<app-form [data]="data" [mode]="mode"></app-form>
+<div class="col-12" *ngIf="alert.value">
+    <div
+        class="alert show d-flex justify-content-between"
+        [class.alert-danger]="!alert.msg"
+        [class.alert-success]="alert.msg"
+        role="alert"
+    >
+        <div>
+            <strong>{{ alert.title }}</strong>
+            {{ alert.body }}
+        </div>
+        <button
+            type="button"
+            class="btn-close"
+            (click)="alert.value = false"
+        ></button>
+    </div>
+</div>
+
+<app-form
+    [data]="data"
+    [mode]="mode"
+    (onSubmit)="submitForm($event)"
+></app-form>
 
 <app-list
     [data]="data"

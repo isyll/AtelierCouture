@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Article::class, 'article_vente_id');
             $table->foreignIdFor(Article::class, 'article_confection_id');
+            $table->float('quantite');
         });
     }
 

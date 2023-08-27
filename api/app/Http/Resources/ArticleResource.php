@@ -23,9 +23,15 @@ class ArticleResource extends JsonResource
             'confection'   => $this->whenLoaded('confection', function () {
                 return static::collection($this->confection);
             }),
-            'fournisseurs' => FournisseurResource::collection($this->fournisseurs),
+            'fournisseurs' => $this->when(
+                $this->type === 'confection',
+                FournisseurResource::collection($this->fournisseurs)
+            ),
             'category'     => CategoryResource::make($this->category),
-            'photo'        => $this->photo
+            'photo'        => $this->photo,
+            'quantite'     => $this->whenPivotLoaded('vente_confection', function () {
+                return $this->pivot['quantite'];
+            })
         ];
     }
 }
