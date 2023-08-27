@@ -18,6 +18,7 @@ import { ArticlesVenteComponent } from './articles-vente/articles-vente.componen
 import { FormComponent } from './articles-vente/form/form.component';
 import { ListComponent } from './articles-vente/list/list.component';
 import { ValidationErrorMsgComponent } from './validation-error-msg/validation-error-msg.component';
+import { ArtSuggestionsComponent } from './articles-vente/form/art-suggestions/art-suggestions.component';
 
 @NgModule({
     declarations: [
@@ -33,6 +34,7 @@ import { ValidationErrorMsgComponent } from './validation-error-msg/validation-e
         FormComponent,
         ListComponent,
         ValidationErrorMsgComponent,
+        ArtSuggestionsComponent,
     ],
     imports: [
         BrowserModule,

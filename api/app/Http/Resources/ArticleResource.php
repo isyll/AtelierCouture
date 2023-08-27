@@ -14,22 +14,25 @@ class ArticleResource extends JsonResource
     public function toArray(Request $request)
     {
         return [
-            'id'           => $this->id,
-            'libelle'      => $this->libelle,
-            'ref'          => $this->ref,
-            'prix'         => $this->prix,
-            'stock'        => $this->stock,
-            'type'         => $this->type,
-            'confection'   => $this->whenLoaded('confection', function () {
+            'id'               => $this->id,
+            'libelle'          => $this->libelle,
+            'ref'              => $this->ref,
+            'prix'             => $this->prix,
+            'stock'            => $this->stock,
+            'type'             => $this->type,
+            'confection'       => $this->when($this->type === 'vente', function () {
                 return static::collection($this->confection);
             }),
-            'fournisseurs' => $this->when(
+            'promo'            => $this->when($this->type === 'vente', $this->promo),
+            'marge'            => $this->when($this->type === 'vente', $this->marge),
+            'cout_fabrication' => $this->when($this->type === 'vente', $this->cout_fabrication),
+            'fournisseurs'     => $this->when(
                 $this->type === 'confection',
                 FournisseurResource::collection($this->fournisseurs)
             ),
-            'category'     => CategoryResource::make($this->category),
-            'photo'        => $this->photo,
-            'quantite'     => $this->whenPivotLoaded('vente_confection', function () {
+            'category'         => CategoryResource::make($this->category),
+            'photo'            => $this->photo,
+            'quantite'         => $this->whenPivotLoaded('vente_confection', function () {
                 return $this->pivot['quantite'];
             })
         ];

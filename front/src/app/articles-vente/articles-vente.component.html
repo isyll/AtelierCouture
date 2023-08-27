@@ -20,7 +20,9 @@
 <app-form
     [data]="data"
     [mode]="mode"
+    [article]="article"
     (onSubmit)="submitForm($event)"
+    (toAddMode)="switchMode()"
 ></app-form>
 
 <app-list
@@ -29,6 +31,8 @@
     [total]="total"
     [page]="page"
     [mode]="mode"
+    (deleteArticle)="onDeleteArticle($event)"
+    (editArticle)="onEditArticle($event)"
 >
 </app-list>
 

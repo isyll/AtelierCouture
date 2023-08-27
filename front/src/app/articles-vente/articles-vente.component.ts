@@ -6,6 +6,7 @@ import { AlertMsg } from '../shared/interfaces/AlertMsg';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormComponent } from './form/form.component';
+import { Article } from '../shared/interfaces/Article';
 
 @Component({
     selector: 'app-articles-vente',
@@ -16,16 +17,23 @@ export class ArticlesVenteComponent implements OnInit {
     form: FormComponent = <any>{};
 
     data!: ArticleVenteData;
+
     page = 1;
+
     size = 2;
+
     total!: number;
+
     mode: mode = mode.add;
+
     alert: AlertMsg = {
         value: false,
         msg: true,
         title: '',
         body: '',
     };
+
+    article!: Article | undefined;
 
     constructor(private service: ArticlesVenteService) {}
 
@@ -48,12 +56,13 @@ export class ArticlesVenteComponent implements OnInit {
 
     switchMode() {
         if (this.mode === mode.add) this.mode = mode.edit;
-        else this.mode = mode.add;
+        else {
+            this.article = undefined;
+            this.mode = mode.add;
+        }
     }
 
     submitForm(data: any) {
-        console.log(data);
-
         if (this.mode === mode.add) {
             this.service
                 .create(data)
@@ -73,11 +82,37 @@ export class ArticlesVenteComponent implements OnInit {
             if ((this.total + 1) / this.size - lastPage > 0) lastPage++;
 
             this.pageLoad(lastPage);
+            this.data.articles_vente.data.push(data);
         } else {
+            console.log(data);
         }
     }
 
-    private handleError = (error: HttpErrorResponse) => {
+    onDeleteArticle(art: any) {
+        this.service
+            .delete(art.id)
+            .pipe(catchError(this.handleError))
+            .subscribe((response: any) => {
+                this.alert = {
+                    value: true,
+                    msg: true,
+                    body: '',
+                    title: response.message,
+                };
+
+                this.data.articles_vente.data =
+                    this.data.articles_vente.data.filter(
+                        (item) => item.id != art.id
+                    );
+            });
+    }
+
+    onEditArticle(art: any) {
+        this.article = art;
+        this.switchMode(); // mode == 'edit'
+    }
+
+    protected handleError = (error: HttpErrorResponse) => {
         if (error.status === 0) {
             this.alert = {
                 msg: true,

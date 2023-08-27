@@ -18,7 +18,7 @@ export class MyValidators {
                 .forEach((conf: any) => {
                     if (
                         !confection
-                            .map((conf: any) => conf.idConf)
+                            .map((conf: any) => conf.id)
                             .includes(conf)
                     )
                         novalid = true;

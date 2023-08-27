@@ -25,7 +25,7 @@ class Article extends Model
             if (request()->fournisseurs) {
                 $item->fournisseurs()->attach(request()->fournisseurs);
             }
-            if (request()->confection) {
+            if (request()->confection && $item->type === 'vente') {
                 $item->confection()->attach(request()->confection);
             }
         });
@@ -33,6 +33,10 @@ class Article extends Model
         static::updated(function ($item) {
             if (request()->fournisseurs) {
                 $item->fournisseurs()->sync(request()->fournisseurs);
+            }
+            if (request()->confection && $item->type === 'vente') {
+
+                $item->confection()->sync(request()->confection);
             }
         });
     }

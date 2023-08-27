@@ -13,8 +13,10 @@ return new class extends Migration {
     {
         Schema::create('vente_confection', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Article::class, 'article_vente_id');
-            $table->foreignIdFor(Article::class, 'article_confection_id');
+            $table->foreignIdFor(Article::class, 'article_vente_id')
+                ->constrained('articles')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(Article::class, 'article_confection_id')
+                ->constrained('articles')->cascadeOnDelete()->cascadeOnUpdate();
             $table->float('quantite');
         });
     }

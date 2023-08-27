@@ -1,3 +1,13 @@
+<div class="d-flex justify-content-between">
+    <h3>ARTICLE</h3>
+    <button
+        class="btn text-danger fs-5"
+        *ngIf="mode == 'edit'"
+        (click)="toAddMode.emit()"
+    >
+        <i class="bi bi-x-lg"></i>
+    </button>
+</div>
 <form
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
@@ -62,6 +72,7 @@
                     type="checkbox"
                     class="form-check-inline"
                     (change)="onCheckPromo($event)"
+                    [checked]="isPromo"
                 />
             </div>
             <div class="col-6" *ngIf="isPromo">
@@ -113,14 +124,21 @@
                         [formGroupName]="i"
                     >
                         <td>
-                            <input type="hidden" formControlName="idConf" />
-                            <app-suggestions
+                            <input type="hidden" formControlName="id" />
+                            <input
+                                type="text"
+                                class="form-control"
+                                formControlName="libelle"
+                                (input)="onArtConfInput($event, i)"
+                                #input
+                            />
+                            <app-art-suggestions
+                                [input]="input"
                                 [items]="artConfSuggestions[i]"
                                 [print]="printSuggestion"
                                 (itemClicked)="onArtConfSelect($event, i)"
-                                (onInput)="onArtConfInput($event, i)"
                                 (itemClicked)="calculateTotal()"
-                            ></app-suggestions>
+                            ></app-art-suggestions>
                         </td>
                         <td>
                             <input

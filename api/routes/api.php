@@ -64,5 +64,7 @@ Route::prefix('/articles')->controller(ArticleController::class)->group(function
             Route::get('/', 'paginate');
             Route::get('/all', 'index');
             Route::post('/', 'create');
+            Route::delete('/{article}', 'delete');
+            Route::put('/{article}', 'update');
         });
 });

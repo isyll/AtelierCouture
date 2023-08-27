@@ -1,4 +1,3 @@
-
 <div class="col-12 my-3 row">
     <table class="table table-bordered">
         <thead>
@@ -6,6 +5,7 @@
                 <th scope="col">Libellé</th>
                 <th scope="col">Quantité stock</th>
                 <th scope="col">Articles confection</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody *ngIf="data">
@@ -25,9 +25,24 @@
                     {{ artVente.stock }}
                 </td>
                 <td>
-                    <span *ngFor="let conf of artVente.confection"
-                        >{{ conf.libelle }} - {{ conf.quantite }}</span
+                    <span *ngFor="let conf of artVente.confection">
+                        {{ conf.libelle }}: {{ conf.quantite }};
+                    </span>
+                </td>
+                <td>
+                    <button
+                        class="text-warning btn btn-link"
+                        (click)="editArticle.emit(artVente)"
                     >
+                        Edit
+                    </button>
+                    <code class="text-dark"> / </code>
+                    <button
+                        class="text-danger btn btn-link"
+                        (click)="deleteArticle.emit(artVente)"
+                    >
+                        Supprimer
+                    </button>
                 </td>
             </tr>
         </tbody>

@@ -12,6 +12,7 @@ export interface Article {
     category: Categorie;
     confection?: Array<Article>;
     quantite?: number
+    promo?: boolean
 }
 
 export interface ArticleAll {

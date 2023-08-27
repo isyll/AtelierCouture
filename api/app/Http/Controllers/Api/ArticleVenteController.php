@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateArticleVenteRequest;
+use App\Http\Requests\UpdateArticleVenteRequest;
 use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ArticleVenteCollection;
 use App\Http\Resources\CategoryResource;
@@ -37,5 +38,53 @@ class ArticleVenteController extends Controller
     {
         $size = $request->input('size', 2);
         return new ArticleVenteCollection(Article::with('confection')->where('type', 'vente')->paginate($size));
+    }
+
+    public function delete(int $article)
+    {
+        $article = Article::find($article);
+        if ($article) {
+            if ($article->type === 'vente') {
+                $article->confection;
+                $data = $article;
+                $article->delete();
+
+                return [
+                    'message' => 'Suppression effectuée avec succès',
+                    'data'    => ArticleResource::make($data)
+                ];
+            } else return response()->json([
+                    'message' => "L'article n'est pas de type vente",
+                ], 422);
+        }
+
+        return response()->json([
+            'message' => "L'article n'existe pas",
+        ], 422);
+    }
+
+    public function update(int $article, UpdateArticleVenteRequest $request)
+    {
+        $article = Article::find($article);
+
+        if ($article) {
+            if ($article->type === 'vente') {
+                $validated = $request->validated();
+
+                $article->fill($validated);
+                $article->save();
+
+                return [
+                    'message' => 'Mise à jour effectuée avec succès',
+                    'data'    => ArticleResource::make($article)
+                ];
+            } else return response()->json([
+                    'message' => "L'article n'est pas de type vente",
+                ], 422);
+        }
+
+        return response()->json([
+            'message' => "L'article n'existe pas",
+        ], 422);
     }
 }

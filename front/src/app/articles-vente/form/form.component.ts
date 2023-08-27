@@ -29,17 +29,20 @@ export class FormComponent implements OnChanges {
     data!: ArticleVenteData;
 
     @Input()
-    article!: Article;
+    article!: Article | undefined;
 
     @Input()
     mode!: mode;
 
+    @Output('onSubmit')
+    submitFormEvent = new EventEmitter();
+
+    @Output('toAddMode')
+    toAddMode = new EventEmitter();
+
     isPromo: boolean = false;
 
     form!: FormGroup;
-
-    @Output('onSubmit')
-    submitFormEvent = new EventEmitter();
 
     artConfSuggestions: { [inputId: number]: Article[] } = {};
 
@@ -58,10 +61,7 @@ export class FormComponent implements OnChanges {
             ],
             cout_fabrication: ['', [Validators.required]],
             photo: ['', [Validators.required]],
-            promo: [
-                '',
-                [Validators.required, Validators.min(0), Validators.max(100)],
-            ],
+            promo: [null, [Validators.min(0), Validators.max(100)]],
             confection: this.fb.array([], [Validators.required]),
             ref: ['', Validators.required],
             total: [''],
@@ -103,24 +103,33 @@ export class FormComponent implements OnChanges {
         return false;
     };
 
-    // donne champs a afficher dans la liste des sugestions
+    // donne le champs a afficher dans la liste des sugestions
     printSuggestion = (art: Article) => art.libelle;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.article) {
-            this.article.confection?.forEach((item) =>
-                this.confection.push(item)
-            );
+            console.log(this.article);
+
+            this.form.patchValue(this.article);
+            this.isPromo = this.article.promo ? true : false;
+            this.calculateTotal();
+        } else {
+            this.form.reset();
+            this.isPromo = false;
         }
 
         if (this.data) {
             this.form.setValidators(
+                // vérifier que fil, bouton, tissu sont présents dans la liste
+                // des confection de l'article
                 MyValidators.ibrahimaSylla(this.data.articles_confection)
             );
         }
     }
 
-    onArtConfInput(text: string, i: number) {
+    onArtConfInput(event: Event, i: number) {
+        const target = event.target as HTMLInputElement;
+        const text = target.value.trim().replace(/\s+/g, ' ').toLowerCase();
         this.artConfSuggestions[i] = [];
 
         if (text) {
@@ -129,7 +138,7 @@ export class FormComponent implements OnChanges {
                 .filter(
                     (item) =>
                         !this.confection.controls.some(
-                            (art) => art.get('idConf')?.value == item.id
+                            (art) => art.get('id')?.value == item.id
                         )
                 );
         }
@@ -141,7 +150,7 @@ export class FormComponent implements OnChanges {
         this.artConfSuggestions = [];
 
         const conf = this.confection.at(index);
-        conf.get('idConf')?.setValue(artConf.id);
+        conf.get('id')?.setValue(artConf.id);
     }
 
     addConfection() {
@@ -150,12 +159,12 @@ export class FormComponent implements OnChanges {
         if (
             !this.confection.controls.some(
                 (art) =>
-                    art.get('idConf')?.value == 0 ||
-                    art.get('quantite')?.value > 0
+                    art.get('id')?.value == 0 || art.get('quantite')?.value <= 0
             )
         ) {
             const conf = this.fb.group({
-                idConf: 0,
+                id: 0,
+                libelle: '',
                 quantite: 0,
             });
 
@@ -177,9 +186,9 @@ export class FormComponent implements OnChanges {
 
         // reformatage des confections
         data.confection = data.confection
-            .filter((item: any) => item.idConf != 0)
+            .filter((item: any) => item.id != 0)
             .map((item: any) => {
-                return { [item.idConf]: { quantite: item.quantite } };
+                return { [item.id]: { quantite: item.quantite } };
             })
             .reduce((result: any, obj: any) => {
                 return { ...result, ...obj };
@@ -189,6 +198,7 @@ export class FormComponent implements OnChanges {
     }
 
     resetForm() {
+        this.confection.clear();
         this.form.reset();
     }
 
@@ -233,7 +243,7 @@ export class FormComponent implements OnChanges {
         this.confection.controls.forEach((conf) => {
             const qtt = conf.get('quantite')?.value ?? 0,
                 prix = this.data.articles_confection.find(
-                    (art) => art.id == conf.get('idConf')?.value
+                    (art) => art.id == conf.get('id')?.value
                 )?.prix;
 
             if (prix) cout_fab += qtt * prix;
