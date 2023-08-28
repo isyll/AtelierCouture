@@ -21,7 +21,6 @@
                             name="libelle"
                             formControlName="libelle"
                             (input)="updateRef()"
-                            (input)="check()"
                         />
                         <small
                             class="text-danger mt-1 p-0 w-auto"
@@ -43,7 +42,6 @@
                             class="form-control"
                             name="prix"
                             formControlName="prix"
-                            (input)="check()"
                         />
                     </td>
                 </tr>
@@ -56,29 +54,40 @@
                             class="form-control"
                             name="stock"
                             formControlName="stock"
-                            (input)="check()"
                         />
                     </td>
                 </tr>
                 <tr>
                     <td><label for="categories">Catégorie</label></td>
                     <td>
-                        <select
-                            *ngIf="data?.categories"
-                            class="form-select"
-                            formControlName="category"
-                            (change)="updateRef()"
-                            (change)="check()"
-                            [compareWith]="compareCat"
-                        >
-                            <option selected value="">Choisir</option>
-                            <option
-                                [ngValue]="c"
-                                *ngFor="let c of data.categories"
+                        <div class="d-flex p-0">
+                            <select
+                                *ngIf="data?.categories"
+                                class="form-select"
+                                formControlName="category"
+                                (change)="updateRef()"
+                                [compareWith]="compareCat"
                             >
-                                {{ c.libelle }}
-                            </option>
-                        </select>
+                                <option [ngValue]="null" selected>
+                                    Choisir
+                                </option>
+                                <option
+                                    [ngValue]="c"
+                                    *ngFor="let c of data.categories"
+                                >
+                                    {{ c.libelle }}
+                                </option>
+                            </select>
+                            <button
+                                type="button"
+                                class="btn btn-link text-reset"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#addNewCategory"
+                            >
+                                <i class="bi bi-plus-square fs-4"></i>
+                            </button>
+                        </div>
+                        <add-new-category [unites]="data.unites" (onSubmit)="onCreateNewCategory($event)"></add-new-category>
                     </td>
                 </tr>
                 <tr class="position-relative">
@@ -111,11 +120,9 @@
                         width="150px"
                         height="150px"
                         [src]="form.get('photo')?.value"
-                        #photoContainer
                 /></label>
                 <input
                     class="form-control d-none"
-                    formControlName="photo"
                     type="file"
                     id="photo"
                     accept="image/*"
@@ -137,7 +144,9 @@
                 <button
                     class="btn btn-primary"
                     type="submit"
-                    [disabled]="submitBtnDisabled"
+                    [disabled]="
+                        form.invalid || (mode === 'edit' && form.pristine)
+                    "
                 >
                     {{ mode === "edit" ? "Éditer" : "Enregistrer" }}
                 </button>

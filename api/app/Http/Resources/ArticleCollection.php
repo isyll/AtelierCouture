@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Category;
 use App\Models\Fournisseur;
+use App\Models\Unite;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ArticleCollection extends ResourceCollection
@@ -40,6 +41,7 @@ class ArticleCollection extends ResourceCollection
         if ($this->all) {
             $data['categories']   = CategoryResource::collection(Category::where('type', 'confection')->get());
             $data['fournisseurs'] = FournisseurResource::collection(Fournisseur::all());
+            $data['unites'] = UniteResource::collection(Unite::all());
         }
 
         return $data;

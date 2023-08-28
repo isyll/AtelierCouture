@@ -31,13 +31,6 @@ class Article extends Model
         });
 
         static::updated(function ($item) {
-            if (request()->fournisseurs) {
-                $item->fournisseurs()->sync(request()->fournisseurs);
-            }
-            if (request()->confection && $item->type === 'vente') {
-
-                $item->confection()->sync(request()->confection);
-            }
         });
     }
 

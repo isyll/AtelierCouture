@@ -20,43 +20,32 @@ import { Categorie } from 'src/app/shared/interfaces/Categorie';
 import { Fournisseur } from 'src/app/shared/interfaces/Fournisseur';
 import { AlertMsg } from 'src/app/shared/interfaces/AlertMsg';
 import { PhotoService } from 'src/app/services/photo.service';
+import { ArticleConfectionAllResponse } from 'src/app/shared/interfaces/Response';
+import { AddCategoryComponent } from './add-category/add-category.component';
 
 @Component({
     selector: 'app-articles-form',
     templateUrl: './articles-form.component.html',
 })
 export class ArticlesShowComponent implements OnChanges {
-    @ViewChild('photoContainer')
-    photoImg!: any;
-
+    @ViewChild(AddCategoryComponent, { static: false })
+    addCategoryComponent: AddCategoryComponent = <AddCategoryComponent>{};
     @Input()
     mode: mode = mode.add;
-
     @Input()
     article!: Article | undefined;
-
     @Input()
-    data!: {
-        articles: Article[];
-        categories: Categorie[];
-        fournisseurs: Fournisseur[];
-    };
-
+    data!: ArticleConfectionAllResponse;
     @Output()
     toAddModeEvent = new EventEmitter<void>();
-
     @Output()
     onAlert = new EventEmitter<AlertMsg>();
-
     @Output()
     formOk = new EventEmitter<any>();
-
-    submitBtnDisabled = true;
-
+    @Output('onCreateNewCategory')
+    createNewCategoryEvent = new EventEmitter<any>();
     fournItems!: Fournisseur[];
-
     libelleExists = false;
-
     form: FormGroup;
 
     get fournisseurs() {
@@ -76,22 +65,21 @@ export class ArticlesShowComponent implements OnChanges {
     }
 
     compareCat = (cat1: Categorie, cat2: Categorie): boolean => {
-        if (cat1 && cat2) return cat1.id == cat2.id;
-        return false;
+        return cat1 && cat2 ? cat1.id == cat2.id : cat1 == cat2;
     };
 
     printSuggestion = (f: Fournisseur) => f.nom;
 
     constructor(private photoService: PhotoService, private fb: FormBuilder) {
         this.form = this.fb.group({
-            id: ['', Validators.required],
+            id: '',
             libelle: ['', Validators.required],
             prix: ['', Validators.required],
             stock: ['', Validators.required],
-            category: ['', Validators.required],
+            category: [null, Validators.required],
             ref: ['', Validators.required],
-            photo: ['nii', Validators.required],
-            fournisseurs: this.fb.array([]),
+            photo: [null, Validators.required],
+            fournisseurs: this.fb.array([], [Validators.required]),
         });
     }
 
@@ -102,27 +90,34 @@ export class ArticlesShowComponent implements OnChanges {
         } else this.form.reset();
     }
 
+    onCreateNewCategory(categorie: Categorie) {
+        const data = { ...categorie } as any;
+        data.unite = data.unite?.id;
+
+        this.createNewCategoryEvent.emit(data);
+    }
+
     onPhotoPicked(event: Event) {
         const target = event.target as HTMLInputElement;
 
         this.photoService.handle(target, (img: string) =>
             this.form.patchValue({ photo: img })
         );
-
-        this.submitBtnDisabled = !this.check();
     }
 
     onSubmit() {
-        //console.log(this.form.value);return
+        const data = { ...this.form.value };
+        data.fournisseurs = data.fournisseurs.map((f: Fournisseur) => f.id);
 
-        if (this.mode === mode.add) {
-            this.formOk.emit({
-                ...this.form.value,
-            });
+        this.formOk.emit(data);
+    }
 
-            this.submitBtnDisabled = true;
-            this.form.reset();
-        } else this.formOk.emit(this.form.value);
+    resetForm() {
+        this.form.reset();
+        this.fournisseurs.clear();
+    }
+    resetAddCategoryForm() {
+        this.addCategoryComponent.resetForm();
     }
 
     onFournisseurInput(text: string) {
@@ -141,53 +136,21 @@ export class ArticlesShowComponent implements OnChanges {
         this.fournItems = [];
 
         if (
-            !this.fournisseurs.value.some(
-                (item: Fournisseur) => item.id == fourn.id
+            !this.fournisseurs.controls.some(
+                (item) => item.value.id == fourn.id
             )
-        )
-            this.fournisseurs.value.push(fourn);
-
-        this.check();
+        ) {
+            this.fournisseurs.push(this.fb.control(fourn));
+            this.form.markAsDirty();
+        }
     }
 
     onDeleteFournisseur(fourn: Fournisseur) {
-        this.fournisseurs.clear();
-
-        this.fournisseurs.value.forEach((f: Fournisseur) => {
-            if (f.id != fourn.id)
-                this.fournisseurs.value.push(new FormControl(f));
-        });
-
-        this.check();
-    }
-
-    check(): boolean {
-        const id = this.article?.id;
-
-        this.libelleExists = this.data.articles.some(
-            (a) =>
-                (this.mode === mode.add || id != a.id) &&
-                a.libelle.trim().replace(/\s+/g, ' ').toLowerCase() ===
-                    this.form
-                        .get('libelle')
-                        ?.value?.trim()
-                        .replace(/\s+/g, ' ')
-                        .toLowerCase()
+        const index = this.fournisseurs.controls.findIndex(
+            (c) => c.value.id == fourn.id
         );
 
-        if (this.libelleExists) return !(this.submitBtnDisabled = true);
-
-        const valid =
-            this.form.get('libelle')?.value &&
-            this.form.get('libelle')?.value.length >= 3 &&
-            this.form.get('stock')?.value &&
-            this.form.get('prix')?.value &&
-            this.form.get('category')?.value &&
-            this.form.get('fournisseurs')?.value.length;
-
-        if (!valid) return !(this.submitBtnDisabled = true);
-
-        return !(this.submitBtnDisabled = false);
+        this.fournisseurs.removeAt(index);
     }
 
     updateRef() {

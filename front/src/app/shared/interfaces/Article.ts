@@ -11,8 +11,8 @@ export interface Article {
     fournisseurs: Fournisseur[];
     category: Categorie;
     confection?: Array<Article>;
-    quantite?: number
-    promo?: boolean
+    quantite?: number;
+    promo?: boolean;
 }
 
 export interface ArticleAll {

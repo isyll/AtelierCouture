@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ArticleConfectionController;
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\ArticleVenteController;
+use App\Http\Controllers\Api\CategoryConfectionController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FournisseurController;
 use Illuminate\Http\Request;
@@ -23,26 +24,26 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('/categories')
-    ->controller(CategoryController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-        Route::post('/', 'create');
-        Route::put('/{category}', 'update');
-        Route::delete('/{category}', 'delete');
-        Route::get('/search', 'search');
-        Route::get('/filter', 'filter');
-        Route::get('/{category}', 'show')->whereNumber('category');
-    });
+Route::prefix('/categories')->controller(CategoryController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::post('/', 'create');
+    Route::put('/{category}', 'update');
+    Route::delete('/{category}', 'delete');
+    Route::get('/search', 'search');
+    Route::get('/filter', 'filter');
+    Route::get('/{category}', 'show')->whereNumber('category');
 
-Route::prefix('/fournisseurs')
-    ->controller(FournisseurController::class)
-    ->group(function () {
-        Route::get('/', 'index');
-        Route::get('/all', 'all');
-        Route::get('/suggest/{str}', 'suggest');
-        Route::get('/{fournisseur}', 'show');
+    Route::prefix('/confection')->controller(CategoryConfectionController::class)->group(function () {
+        Route::post('/', 'create');
     });
+});
+
+Route::prefix('/fournisseurs')->controller(FournisseurController::class)->group(function () {
+    Route::get('/', 'index');
+    Route::get('/all', 'all');
+    Route::get('/suggest/{str}', 'suggest');
+    Route::get('/{fournisseur}', 'show');
+});
 
 Route::prefix('/articles')->controller(ArticleController::class)->group(function () {
     Route::get('/', 'index');

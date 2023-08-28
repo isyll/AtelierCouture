@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateArticleRequest extends FormRequest
+class UpdateArticleConfectionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,19 +24,23 @@ class CreateArticleRequest extends FormRequest
     {
         return [
             'libelle'        => [
-                'required', Rule::unique('articles', 'libelle')->where(function ($query) {
+                'sometimes', Rule::unique('articles', 'libelle')->ignore($this->article, 'id')->where(function ($query) {
                     return $query->whereNull('deleted_at')
                         ->orWhereNotNull('deleted_at');
                 })
             ],
-            'ref'            => 'required|unique:articles,ref',
-            'prix'           => 'required|numeric',
-            'stock'          => 'required|numeric',
-            'fournisseurs'   => 'required|array|min:1',
-            'fournisseurs.*' => 'required|distinct|numeric|exists:fournisseurs,id',
-            'category'       => 'required|numeric|exists:categories,id',
+            'ref'            => [
+                'sometimes', Rule::unique('articles', 'ref')->ignore($this->article, 'id')->where(function ($query) {
+                    return $query->whereNull('deleted_at')
+                        ->orWhereNotNull('deleted_at');
+                })
+            ],
+            'prix'           => 'sometimes|numeric',
+            'stock'          => 'sometimes|numeric',
+            'fournisseurs'   => 'sometimes',
+            'fournisseurs.*' => 'sometimes|distinct|numeric|exists:fournisseurs,id',
+            'category'       => 'required|distinct|numeric|exists:categories,id',
             'photo'          => 'sometimes|max:65535',
-            'type'           => 'required'
         ];
     }
 
@@ -45,11 +49,11 @@ class CreateArticleRequest extends FormRequest
         return [
             'libelle.required'        => 'Le libellé est manquant',
             'libelle.unique'          => 'Le libellé existe déjà',
-            'ref.required'            => 'La référence est manquante',
-            'prix.required'           => 'Le prix est manquant',
-            'stock.required'          => 'Le stock est manquant',
-            'category.required'       => 'La catégorie est manquante',
+            'prix.numeric'            => 'Le prix est invalide',
+            'stock.numeric'           => 'Le stock est invalide',
             'category.exists'         => "La catégorie n'existe pas",
+            'category.required'       => "La catégorie est manquante",
+            'ref.unique'              => 'La référence appartient à un autre article',
             'fournisseurs.required'   => 'Les fournisseurs sont manquants',
             'fournisseurs.array'      => 'Les fournisseurs sont invalides',
             'fournisseurs.min'        => 'Les fournisseurs sont invalides',

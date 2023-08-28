@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Unite;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('unites', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle');
-            $table->enum('type', ['vente', 'confection']);
-            $table->foreignIdFor(Unite::class, 'unite_id')
-                ->nullable()
-                ->constrained()
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->string('nom')->unique();
+            $table->float('conversion', 10, 4)->unsigned();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -30,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('unites_table');
     }
 };

@@ -19,7 +19,9 @@ class CategoryResource extends JsonResource
             'id'      => $this->id,
             'libelle' => $this->libelle,
             'cl'      => count($this->articles),
-            'type'    => $this->type
+            'type'    => $this->type,
+            'unite'   => $this->when($this->type === 'confection', UniteResource::make($this->unite)),
+            'unites'  => $this->when($this->type === 'confection', UniteResource::collection($this->unites)),
         ];
     }
 }

@@ -38,6 +38,10 @@ class AppServiceProvider extends ServiceProvider
             return true;
         });
 
+        Validator::extend('unites_validation', function ($attribute, $value, $parameters, $validator) {
+            
+        });
+
         Validator::extend('category_validation', function ($attribute, $value, $parameters, $validator) {
             foreach ($parameters as $type) {
                 if (Category::find($value)->type != $type)

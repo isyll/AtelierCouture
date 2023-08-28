@@ -73,6 +73,7 @@ class ArticleVenteController extends Controller
 
                 $article->fill($validated);
                 $article->save();
+                $article->confection()->sync($request->confection);
 
                 return [
                     'message' => 'Mise à jour effectuée avec succès',

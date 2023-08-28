@@ -1,0 +1,50 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="collapse" id="addNewCategory">
+        <div class="card card-body">
+            <div class="form-group">
+                <label for="libelle-category">Libellé</label>
+                <input
+                    id="libelle-category"
+                    formControlName="libelle"
+                    type="text"
+                    class="form-control"
+                />
+            </div>
+            <div class="form-group">
+                <label for="unite-category">Unité</label>
+                <select
+                    id="unite-category"
+                    class="form-select"
+                    formControlName="unite"
+                    [compareWith]="compareUnite"
+                >
+                    <option [ngValue]="null">Choisir</option>
+                    <option
+                        *ngFor="let unite of unites"
+                        value="{{ unite.id }}"
+                        [ngValue]="unite"
+                    >
+                        {{ unite.nom | titlecase }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="conversion-unite">Conversion en mètres</label>
+                <input
+                    type="number"
+                    id="conversion-unite"
+                    class="form-control"
+                    formControlName="conversion"
+                    readonly
+                />
+            </div>
+            <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="form.invalid"
+            >
+                Créer
+            </button>
+        </div>
+    </div>
+</form>

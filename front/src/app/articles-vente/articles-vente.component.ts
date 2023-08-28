@@ -15,24 +15,17 @@ import { Article } from '../shared/interfaces/Article';
 export class ArticlesVenteComponent implements OnInit {
     @ViewChild(FormComponent, { static: false })
     form: FormComponent = <any>{};
-
     data!: ArticleVenteData;
-
     page = 1;
-
     size = 2;
-
     total!: number;
-
     mode: mode = mode.add;
-
     alert: AlertMsg = {
         value: false,
         msg: true,
         title: '',
         body: '',
     };
-
     article!: Article | undefined;
 
     constructor(private service: ArticlesVenteService) {}

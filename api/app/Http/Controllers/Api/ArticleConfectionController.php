@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateArticleRequest;
-use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Requests\CreateArticleConfectionRequest;
+use App\Http\Requests\UpdateArticleConfectionRequest;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
@@ -32,7 +32,7 @@ class ArticleConfectionController extends Controller
         return ArticleResource::make($article);
     }
 
-    public function create(CreateArticleRequest $request)
+    public function create(CreateArticleConfectionRequest $request)
     {
         $validated = $request->validated();
         $article   = Article::create($validated);
@@ -51,13 +51,14 @@ class ArticleConfectionController extends Controller
         return ['data' => Article::whereIn('id', $data)->delete()];
     }
 
-    public function update(UpdateArticleRequest $request, int $article)
+    public function update(UpdateArticleConfectionRequest $request, int $article)
     {
         $article   = Article::findOrFail($article);
         $validated = $request->validated();
 
         $article->fill($validated);
         $article->save();
+        $article->fournisseurs()->sync($request->fournisseurs);
 
         return response()->json(['message' => 'Mise à jour réussie', 'data' => ArticleResource::make($article)]);
     }

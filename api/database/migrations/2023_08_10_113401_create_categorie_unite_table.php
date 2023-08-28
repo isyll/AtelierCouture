@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Unite;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,17 +12,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('categorie_unite', function (Blueprint $table) {
             $table->id();
-            $table->string('libelle');
-            $table->enum('type', ['vente', 'confection']);
-            $table->foreignIdFor(Unite::class, 'unite_id')
-                ->nullable()
+            $table->foreignIdFor(Category::class)
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->softDeletes();
-            $table->timestamps();
+            $table->foreignIdFor(Unite::class, 'unite_id')
+                ->constrained()
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('categories_unites');
     }
 };

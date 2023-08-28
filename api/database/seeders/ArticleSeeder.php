@@ -14,42 +14,53 @@ class ArticleSeeder extends Seeder
      */
     public function run(): void
     {
-        $fournisseurs = Fournisseur::all();
+        $fournisseurs          = Fournisseur::all();
+        $categories_vente      = Category::where('type', 'vente')->get();
+        $categories_confection = Category::where('type', 'confection')->get();
 
         $articles = [
-            'vente'      => ['kaftan', 'pagne', 'grand boubou', 'costume', 'pantalon'],
-            'confection' => ['doublure', 'ruban', 'dentelles', 'fil', 'bouton', 'tissu']
+            'confection' => [
+                'fil'    => ['fil coton', 'fil soie', 'fil polyester'],
+                'bouton' => ['bouton de manche', 'bouton en plastique', 'bouton en bois'],
+                'tissu'  => ['wax', 'bazin', 'soie', 'voile']
+            ],
+
+            'vente'      => [
+                'costume'          => ['costume classique', 'costume 3 pièces'],
+                'robe'             => ['robe évasée'],
+                'costume africain' => ['grand boubou', 'taille basse']
+            ]
         ];
 
-        foreach ($articles as $key => $value) {
-            foreach ($value as $art) {
-                $data = [
-                    'type'    => $key,
-                    'libelle' => $art,
-                    'stock'   => fake()->randomFloat(
-                        1,
-                        max: 100
-                    ),
-                ];
+        foreach ($articles as $type => $values) {
+            foreach ($values as $categorie => $articles_data) {
+                foreach ($articles_data as $nom) {
+                    $data = [
+                        'type'    => $type,
+                        'libelle' => $nom,
+                        'stock'   => fake()->randomFloat(
+                            1,
+                            max: 100
+                        ),
+                    ];
 
-                if ($key === 'confection')
-                    $data['prix'] = fake()->randomFloat(
-                        1,
-                        max: 10_000
-                    );
+                    if ($type === 'confection') {
+                        $data['prix'] = fake()->randomFloat(
+                            1,
+                            max: 10_000
+                        );
+                    }
 
-                $categories = Category::where('type', $key)->get();
+                    $cat                 = Category::where('libelle', $categorie)->first();
+                    $data['category_id'] = $cat->id;
+                    $data['ref']         = strtoupper("REF-" . substr($nom, 0, 3) .
+                        '-' . substr($cat->libelle, 0, 3) . '-' . count($cat->articles) + 1);
 
-                $data['category_id'] = ($categorie = fake()->randomElement($categories))['id'];
+                    $article = Article::create($data);
 
-                $ref         = strtoupper("REF-" . substr($art, 0, 3) .
-                    '-' . substr('', 0, 3) . substr($categorie->libelle, 0, 3) . '-' . count($categorie->articles) + 1);
-                $data['ref'] = $ref;
-
-                $article = Article::create($data);
-
-                if ($key === 'confection')
-                    $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
+                    if ($type === 'confection')
+                        $article->fournisseurs()->save(fake()->randomElement($fournisseurs));
+                }
             }
         }
     }
