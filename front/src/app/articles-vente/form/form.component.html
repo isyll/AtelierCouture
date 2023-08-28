@@ -2,6 +2,7 @@
     <h3>ARTICLE</h3>
     <button
         class="btn text-danger fs-5"
+        type="button"
         *ngIf="mode == 'edit'"
         (click)="toAddMode.emit()"
     >
@@ -113,6 +114,7 @@
                     <tr>
                         <th scope="col">Libellé</th>
                         <th scope="col">Quantité</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody formArrayName="confection">
@@ -147,6 +149,18 @@
                                 formControlName="quantite"
                                 (input)="calculateTotal()"
                             />
+                        </td>
+                        <td>
+                            <button
+                                class="btn text-danger border border-0"
+                                type="button"
+                                placement="top"
+                                ngbTooltip="Supprimer"
+                                [disabled]="!confection.at(i).get('id')?.value"
+                                (click)="deleteArtConf(i)"
+                            >
+                                <i class="bi bi-dash-lg fs-3"></i>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -226,7 +240,7 @@
         <button
             type="submit"
             class="btn btn-primary text-white"
-            [disabled]="form.invalid"
+            [disabled]="form.invalid || (mode === 'edit' && form.pristine)"
         >
             Envoyer
         </button>

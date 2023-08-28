@@ -48,6 +48,8 @@ export class ArticlesVenteComponent implements OnInit {
         this.page = p;
 
         this.service.paginate(this.page, this.size).subscribe((response) => {
+            console.log(response);
+
             this.data.articles_vente = response;
             this.total = response.pagination.total;
             this.size = response.pagination.per_page;
@@ -58,6 +60,7 @@ export class ArticlesVenteComponent implements OnInit {
         if (this.mode === mode.add) this.mode = mode.edit;
         else {
             this.article = undefined;
+            this.form.resetForm();
             this.mode = mode.add;
         }
     }
@@ -78,13 +81,24 @@ export class ArticlesVenteComponent implements OnInit {
                     this.form.resetForm();
                 });
 
+            // on charge la derniere page ou se trouve le nouvel article
             let lastPage = Math.floor((this.total + 1) / this.size);
             if ((this.total + 1) / this.size - lastPage > 0) lastPage++;
-
             this.pageLoad(lastPage);
-            this.data.articles_vente.data.push(data);
         } else {
-            console.log(data);
+            this.service
+                .update(data.id, data)
+                .pipe(catchError(this.handleError))
+                .subscribe((response: any) => {
+                    this.alert = {
+                        value: true,
+                        msg: true,
+                        body: '',
+                        title: response.message,
+                    };
+
+                    this.form.resetForm();
+                });
         }
     }
 

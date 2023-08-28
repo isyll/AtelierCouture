@@ -48,6 +48,7 @@ export class FormComponent implements OnChanges {
 
     constructor(private fb: FormBuilder, private photoService: PhotoService) {
         this.form = this.fb.group({
+            id: '',
             libelle: ['', [Validators.required]],
             category: ['', [Validators.required]],
             stock: ['', [Validators.required, Validators.min(0)]],
@@ -108,11 +109,17 @@ export class FormComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.article) {
-            console.log(this.article);
-
             this.form.patchValue(this.article);
             this.isPromo = this.article.promo ? true : false;
             this.calculateTotal();
+            this.confection.clear();
+            this.article.confection?.forEach((item) =>
+                this.addConfection(item)
+            );
+
+            // étant donné que la marge est validé alors que les champs dont
+            // il dépend ne sont pas encore chargés, il faut réexécuter la validation
+            this.form.get('marge')?.updateValueAndValidity();
         } else {
             this.form.reset();
             this.isPromo = false;
@@ -121,10 +128,18 @@ export class FormComponent implements OnChanges {
         if (this.data) {
             this.form.setValidators(
                 // vérifier que fil, bouton, tissu sont présents dans la liste
-                // des confection de l'article
+                // des articles de confection de l'article
                 MyValidators.ibrahimaSylla(this.data.articles_confection)
             );
         }
+    }
+
+    deleteArtConf(index: number) {
+        this.confection.removeAt(index);
+        // removeAt ne met pas pristine à false, donc il faut le faire
+        // manuellement
+        this.form.markAsDirty();
+        if (this.confection.length === 0) this.addConfection();
     }
 
     onArtConfInput(event: Event, i: number) {
@@ -153,7 +168,7 @@ export class FormComponent implements OnChanges {
         conf.get('id')?.setValue(artConf.id);
     }
 
-    addConfection() {
+    addConfection(data: any = null) {
         // on ne peut ajouter un nouveau champs que si le dernier a été
         // rempli corretement
         if (
@@ -163,9 +178,9 @@ export class FormComponent implements OnChanges {
             )
         ) {
             const conf = this.fb.group({
-                id: 0,
-                libelle: '',
-                quantite: 0,
+                id: data ? data.id : 0,
+                libelle: data ? data.libelle : '',
+                quantite: data ? data.quantite : 0,
             });
 
             this.confection.push(conf);
@@ -198,8 +213,9 @@ export class FormComponent implements OnChanges {
     }
 
     resetForm() {
-        this.confection.clear();
         this.form.reset();
+        this.confection.clear();
+        this.addConfection();
     }
 
     onCheckPromo(event: Event) {

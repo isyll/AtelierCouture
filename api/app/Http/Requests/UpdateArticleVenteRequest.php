@@ -42,7 +42,7 @@ class UpdateArticleVenteRequest extends FormRequest
             'type'             => 'sometimes',
             'cout_fabrication' => 'sometimes|numeric',
             'marge'            => 'sometimes|numeric',
-            'promo'            => 'sometimes|numeric'
+            'promo'            => 'sometimes|numeric|nullable'
         ];
     }
 

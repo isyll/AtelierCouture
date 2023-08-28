@@ -30,4 +30,40 @@ export class ListComponent {
 
     @Output()
     deleteArticle = new EventEmitter();
+
+    deleteArticleConfirm: { [key: string]: any } = {};
+    confirmationTimeOut: number = 3000;
+    countdown!: number;
+    countdownTimer!: any;
+
+    onDeleteArticle(article: Article) {
+        console.log(article);
+
+        clearInterval(this.countdownTimer);
+
+        const removeConfirmation = () =>
+            delete this.deleteArticleConfirm[article.id];
+
+        if (article.id in this.deleteArticleConfirm) {
+            this.deleteArticle.emit(article);
+
+            clearTimeout(this.deleteArticleConfirm[article.id]);
+            removeConfirmation();
+        } else {
+            this.deleteArticleConfirm = {};
+            clearInterval(this.countdownTimer);
+
+            this.deleteArticleConfirm[article.id] = setTimeout(() => {
+                removeConfirmation();
+
+                if (this.countdown < 1) {
+                    clearInterval(this.countdownTimer);
+                    this.countdown = this.confirmationTimeOut / 1000;
+                }
+            }, this.confirmationTimeOut);
+
+            this.countdown = this.confirmationTimeOut / 1000;
+            this.countdownTimer = setInterval(() => this.countdown--, 1000);
+        }
+    }
 }

@@ -16,11 +16,7 @@ export class MyValidators {
                 )
                 .map((art: Article) => art.id)
                 .forEach((conf: any) => {
-                    if (
-                        !confection
-                            .map((conf: any) => conf.id)
-                            .includes(conf)
-                    )
+                    if (!confection.map((conf: any) => conf.id).includes(conf))
                         novalid = true;
                 });
 
@@ -29,7 +25,7 @@ export class MyValidators {
         };
     }
 
-    static maxPct(pct: number) {
+    static maxPct(pct: number): ValidatorFn {
         pct = pct / 100;
 
         return (control: AbstractControl): ValidationErrors | null => {

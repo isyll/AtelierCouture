@@ -39,9 +39,13 @@
                     <code class="text-dark"> / </code>
                     <button
                         class="text-danger btn btn-link"
-                        (click)="deleteArticle.emit(artVente)"
+                        (click)="onDeleteArticle(artVente)"
                     >
-                        Supprimer
+                        {{
+                            deleteArticleConfirm[artVente.id] != undefined
+                                ? "OK" + " (" + countdown + ")"
+                                : "Supprimer"
+                        }}
                     </button>
                 </td>
             </tr>
