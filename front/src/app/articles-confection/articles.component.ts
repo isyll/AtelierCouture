@@ -10,13 +10,12 @@ import { Article } from '../shared/interfaces/Article';
 import { mode } from '../shared/enums/mode';
 import { Categorie } from '../shared/interfaces/Categorie';
 import { AlertMsg } from '../shared/interfaces/AlertMsg';
-import { Fournisseur } from '../shared/interfaces/Fournisseur';
 import { ArticleConfectionAllResponse } from '../shared/interfaces/Response';
 import { catchError, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ArticlesShowComponent } from './articles-form/articles-form.component';
 import { CategorieConfectionService } from '../services/categorie-confection.service';
-import { AddCategoryComponent } from './articles-form/add-category/add-category.component';
+import { Unite } from '../shared/interfaces/Unite';
 
 @Component({
     selector: 'app-articles',
@@ -138,8 +137,22 @@ export class ArticlesComponent implements OnInit {
         this.alertMsg.value = true;
     }
 
+    onUpdateCategory(data: any) {
+        this.categorieService
+            .update(data.category, data)
+            .pipe(catchError(this.handleError))
+            .subscribe((response) => {
+                this.alertMsg = {
+                    value: true,
+                    title:
+                        response.message ?? 'Catégorie modifiée avec succès.',
+                    body: '',
+                    msg: true,
+                };
+            });
+    }
+
     newCategory(data: Categorie) {
-        console.log(data);
         this.categorieService
             .create(data)
             .pipe(catchError(this.handleError))
@@ -151,7 +164,24 @@ export class ArticlesComponent implements OnInit {
                     msg: true,
                 };
 
-                this.articleConfectionFormComponent.resetAddCategoryForm();
+                this.articleConfectionFormComponent.addCategoryCompleted(data);
+            });
+    }
+
+    newUnite(unite: Unite) {
+        this.categorieService
+            .createUnite(unite)
+            .pipe(catchError(this.handleError))
+            .subscribe((response: any) => {
+                this.alertMsg = {
+                    value: true,
+                    title: response.message ?? 'Unité créée avec succès.',
+                    body: '',
+                    msg: true,
+                };
+                unite = response.data;
+
+                this.articleConfectionFormComponent.addUniteCompleted(unite);
             });
     }
 

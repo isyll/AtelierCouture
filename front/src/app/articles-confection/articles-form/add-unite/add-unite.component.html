@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="collapse" id="addNewUnite">
+        <div class="card card-body">
+            <div class="form-group">
+                <label for="nom-unite">Nom</label>
+                <input
+                    id="nom-unite"
+                    formControlName="nom"
+                    type="text"
+                    class="form-control"
+                />
+            </div>
+            <div class="form-group">
+                <label for="conversion-metres">Valeur en mètres</label>
+                <input
+                    type="number"
+                    id="conversion-metres"
+                    class="form-control mb-3"
+                    formControlName="conversion"
+                />
+            </div>
+            <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="form.invalid"
+            >
+                OK
+            </button>
+        </div>
+    </div>
+</form>

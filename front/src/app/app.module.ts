@@ -20,6 +20,7 @@ import { ListComponent } from './articles-vente/list/list.component';
 import { ValidationErrorMsgComponent } from './validation-error-msg/validation-error-msg.component';
 import { ArtSuggestionsComponent } from './articles-vente/form/art-suggestions/art-suggestions.component';
 import { AddCategoryComponent } from './articles-confection/articles-form/add-category/add-category.component';
+import { AddUniteComponent } from './articles-confection/articles-form/add-unite/add-unite.component';
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { AddCategoryComponent } from './articles-confection/articles-form/add-ca
         ValidationErrorMsgComponent,
         ArtSuggestionsComponent,
         AddCategoryComponent,
+        AddUniteComponent,
     ],
     imports: [
         BrowserModule,

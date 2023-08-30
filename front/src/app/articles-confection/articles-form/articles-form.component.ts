@@ -22,6 +22,9 @@ import { AlertMsg } from 'src/app/shared/interfaces/AlertMsg';
 import { PhotoService } from 'src/app/services/photo.service';
 import { ArticleConfectionAllResponse } from 'src/app/shared/interfaces/Response';
 import { AddCategoryComponent } from './add-category/add-category.component';
+import { Unite } from 'src/app/shared/interfaces/Unite';
+import { AddUniteComponent } from './add-unite/add-unite.component';
+import { SuggestionsComponent } from 'src/app/suggestions/suggestions.component';
 
 @Component({
     selector: 'app-articles-form',
@@ -30,12 +33,18 @@ import { AddCategoryComponent } from './add-category/add-category.component';
 export class ArticlesShowComponent implements OnChanges {
     @ViewChild(AddCategoryComponent, { static: false })
     addCategoryComponent: AddCategoryComponent = <AddCategoryComponent>{};
+    @ViewChild(AddUniteComponent, { static: false })
+    addUniteComponent: AddUniteComponent = <AddUniteComponent>{};
+    @ViewChild(SuggestionsComponent, { static: false })
+    suggestionsComponent: SuggestionsComponent = <SuggestionsComponent>{};
+
     @Input()
     mode: mode = mode.add;
     @Input()
     article!: Article | undefined;
     @Input()
     data!: ArticleConfectionAllResponse;
+
     @Output()
     toAddModeEvent = new EventEmitter<void>();
     @Output()
@@ -44,6 +53,11 @@ export class ArticlesShowComponent implements OnChanges {
     formOk = new EventEmitter<any>();
     @Output('onCreateNewCategory')
     createNewCategoryEvent = new EventEmitter<any>();
+    @Output('onCreateNewUnite')
+    createNewUniteEvent = new EventEmitter<any>();
+    @Output('onAttachUnite')
+    attachUniteEvent = new EventEmitter<any>();
+
     fournItems!: Fournisseur[];
     libelleExists = false;
     form: FormGroup;
@@ -68,6 +82,10 @@ export class ArticlesShowComponent implements OnChanges {
         return cat1 && cat2 ? cat1.id == cat2.id : cat1 == cat2;
     };
 
+    compareUnites = (u1: Unite, u2: Unite): boolean => {
+        return u1 && u2 ? u1.id == u2.id : u1 == u2;
+    };
+
     printSuggestion = (f: Fournisseur) => f.nom;
 
     constructor(private photoService: PhotoService, private fb: FormBuilder) {
@@ -80,6 +98,31 @@ export class ArticlesShowComponent implements OnChanges {
             ref: ['', Validators.required],
             photo: [null, Validators.required],
             fournisseurs: this.fb.array([], [Validators.required]),
+            unite: null,
+        });
+
+        this.form.get('category')?.valueChanges.subscribe((value) => {
+            if (value) this.form.patchValue({ unite: value.unite });
+        });
+
+        this.form.get('unite')?.valueChanges.subscribe((value) => {
+            let cat = this.form.get('category')?.value as Categorie;
+            if (value && cat) {
+                // si on choisi une unité différente de celle par défaut
+                // elle est ajouté à la liste des unités de cette catégorie
+                // si celle-ci ne s'y trouve pas déjà
+                if (
+                    value.id != cat.unite?.id &&
+                    !cat.unites?.some((u: Unite) => u.id == value.id)
+                )
+                    this.attachUniteEvent.emit({
+                        category: cat.id,
+                        unites: [
+                            value.id,
+                            ...(cat.unites?.map((u) => u.id) ?? []),
+                        ],
+                    });
+            }
         });
     }
 
@@ -97,6 +140,10 @@ export class ArticlesShowComponent implements OnChanges {
         this.createNewCategoryEvent.emit(data);
     }
 
+    onCreateNewUnite(unite: Unite) {
+        this.createNewUniteEvent.emit(unite);
+    }
+
     onPhotoPicked(event: Event) {
         const target = event.target as HTMLInputElement;
 
@@ -108,6 +155,11 @@ export class ArticlesShowComponent implements OnChanges {
     onSubmit() {
         const data = { ...this.form.value };
         data.fournisseurs = data.fournisseurs.map((f: Fournisseur) => f.id);
+        data.category = data.category.id;
+
+        data.stock = data.stock * data.unite.conversion;
+
+        console.log(data);
 
         this.formOk.emit(data);
     }
@@ -116,8 +168,28 @@ export class ArticlesShowComponent implements OnChanges {
         this.form.reset();
         this.fournisseurs.clear();
     }
-    resetAddCategoryForm() {
+
+    addCategoryCompleted(category?: Categorie) {
         this.addCategoryComponent.resetForm();
+
+        if (category) {
+            // reformatage des unites etant donne que le
+            // select attend un type Unite et que
+            // les unites contiennent des ids.
+            category.unite = this.data.unites.find(
+                (u: any) => u.id == category.unite
+            );
+            category.unites = [];
+            this.data.categories.push(category);
+        }
+    }
+
+    addUniteCompleted(unite?: Unite) {
+        console.log(unite);
+
+        this.addUniteComponent.resetForm();
+
+        if (unite) this.data.unites.push(unite);
     }
 
     onFournisseurInput(text: string) {
@@ -134,6 +206,7 @@ export class ArticlesShowComponent implements OnChanges {
 
     onAddFournisseur(fourn: Fournisseur) {
         this.fournItems = [];
+        this.suggestionsComponent.resetInupt();
 
         if (
             !this.fournisseurs.controls.some(

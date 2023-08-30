@@ -58,4 +58,8 @@ export class SuggestionsComponent {
         this.input.nativeElement.value = this.print(i);
         this.itemClicked.emit(i);
     }
+
+    resetInupt() {
+        this.input.nativeElement.value = '';
+    }
 }

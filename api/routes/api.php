@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ArticleVenteController;
 use App\Http\Controllers\Api\CategoryConfectionController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FournisseurController;
+use App\Http\Controllers\Api\UniteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,7 @@ Route::prefix('/categories')->controller(CategoryController::class)->group(funct
 
     Route::prefix('/confection')->controller(CategoryConfectionController::class)->group(function () {
         Route::post('/', 'create');
+        Route::put('/{category}', 'update');
     });
 });
 
@@ -69,3 +71,10 @@ Route::prefix('/articles')->controller(ArticleController::class)->group(function
             Route::put('/{article}', 'update');
         });
 });
+
+
+Route::prefix('/unites')
+    ->controller(UniteController::class)
+    ->group(function () {
+        Route::post('/', 'create');
+    });

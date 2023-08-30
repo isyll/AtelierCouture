@@ -10,4 +10,6 @@ class Unite extends Model
     use HasFactory;
 
     public $table = 'unites';
+
+    public $guarded = ['id'];
 }

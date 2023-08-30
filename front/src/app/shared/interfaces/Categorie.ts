@@ -7,4 +7,5 @@ export interface Categorie {
     type?: 'confection' | 'vente';
     check?: boolean;
     unite?: Unite;
+    unites?: Unite[];
 }

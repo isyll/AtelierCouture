@@ -32,6 +32,7 @@
                             }}
                         </small>
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td><label for="prix">Prix</label></td>
@@ -44,6 +45,86 @@
                             formControlName="prix"
                         />
                     </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="categories">Catégorie</label></td>
+                    <td>
+                        <select
+                            *ngIf="data?.categories"
+                            class="form-select"
+                            formControlName="category"
+                            (change)="updateRef()"
+                            [compareWith]="compareCat"
+                        >
+                            <option [ngValue]="null" selected>Choisir</option>
+                            <option
+                                [ngValue]="c"
+                                *ngFor="let c of data.categories"
+                            >
+                                {{ c.libelle }}
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        <button
+                            type="button"
+                            class="btn btn-link text-reset"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#addNewCategory"
+                        >
+                            <i class="bi bi-plus-square fs-4"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <add-new-category
+                            [unites]="data.unites"
+                            (onSubmit)="onCreateNewCategory($event)"
+                        ></add-new-category>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label for="unite">Unité</label></td>
+                    <td>
+                        <select
+                            id="unite"
+                            class="form-select"
+                            formControlName="unite"
+                            [compareWith]="compareUnites"
+                        >
+                            <option [ngValue]="null" selected>Choisir</option>
+                            <option
+                                *ngFor="let unite of data.unites"
+                                [ngValue]="unite"
+                            >
+                                {{ unite.nom }}
+                            </option>
+                        </select>
+                    </td>
+                    <td>
+                        <button
+                            type="button"
+                            class="btn btn-link text-reset"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#addNewUnite"
+                            [disabled]="form.get('category')?.invalid"
+                        >
+                            <i class="bi bi-plus-square fs-4"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <add-new-unite
+                            (onSubmit)="onCreateNewUnite($event)"
+                        ></add-new-unite>
+                    </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <td><label for="stock">Stock</label></td>
@@ -55,39 +136,6 @@
                             name="stock"
                             formControlName="stock"
                         />
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="categories">Catégorie</label></td>
-                    <td>
-                        <div class="d-flex p-0">
-                            <select
-                                *ngIf="data?.categories"
-                                class="form-select"
-                                formControlName="category"
-                                (change)="updateRef()"
-                                [compareWith]="compareCat"
-                            >
-                                <option [ngValue]="null" selected>
-                                    Choisir
-                                </option>
-                                <option
-                                    [ngValue]="c"
-                                    *ngFor="let c of data.categories"
-                                >
-                                    {{ c.libelle }}
-                                </option>
-                            </select>
-                            <button
-                                type="button"
-                                class="btn btn-link text-reset"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#addNewCategory"
-                            >
-                                <i class="bi bi-plus-square fs-4"></i>
-                            </button>
-                        </div>
-                        <add-new-category [unites]="data.unites" (onSubmit)="onCreateNewCategory($event)"></add-new-category>
                     </td>
                 </tr>
                 <tr class="position-relative">

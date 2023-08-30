@@ -9,4 +9,8 @@ export class CategorieConfectionService extends AbstractService<Categorie> {
     url() {
         return this.base + 'categories/confection';
     }
+
+    createUnite(data: any) {
+        return this.http.post(this.base + 'unites', data);
+    }
 }
